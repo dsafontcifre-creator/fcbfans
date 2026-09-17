@@ -408,7 +408,7 @@ window.addEventListener('fb-ready', () => window.__start());
    Sube APP_VERSION en cada despliegue.
    ═══════════════════════════════════════════════════════════════ */
 
-const APP_VERSION = 8;
+const APP_VERSION = 10;
 const ADMIN = "David";                 // único que confirma
 const PIN_ADMIN = "1899";              // clave del tesorero
 const CUOTA = 20;                      // € al mes
@@ -979,7 +979,31 @@ function renderPenya(){
   const objetivo = SOCIOS.reduce((s,n)=>s+resumen(n).totalSuyo,0);
   const pct = Math.round(rec.total/objetivo*100);
 
-  let h = `<div class="hero">
+  let h = '';
+  const pend = isAdmin() ? pagosTemp().filter(p=>p.estado==="declarado").sort((a,b)=>(a.declaradoAt||'').localeCompare(b.declaradoAt||'')) : [];
+  if(pend.length){
+    h += `<span class="lbl" style="color:var(--amber)">Por confirmar (${pend.length})</span>`;
+    h += `<div class="hint">Míralo en el banco y dale al ✓. Hasta entonces no cuenta como pagado.</div>`;
+    pend.forEach(p=>{
+      const m = MESES.find(x=>x.k===p.mes);
+      h += `<div class="card" style="border-color:var(--amber);border-width:1.5px">
+        <div style="display:flex;align-items:center;gap:12px">
+          ${av(p.name)}
+          <div style="flex:1;min-width:0">
+            <div class="mid">${esc(p.name)}</div>
+            <div class="sub" style="margin-top:2px">${esc(m?m.n:p.mes)} · ${esc((METODOS[p.metodo]||{l:'—'}).l)}${p.declaradoAt?' · lo marcó el '+p.declaradoAt.slice(8,10)+'/'+p.declaradoAt.slice(5,7):''}</div>
+          </div>
+          <div class="mid" style="color:var(--amber)">${eur(p.importe)}</div>
+        </div>
+        <button class="btn" style="margin-top:14px" onclick="confirmarPago('${p.id}')">✓ Sí, lo he cobrado</button>
+        <div class="row-btns" style="margin-top:8px">
+          ${p.foto?`<button class="btn-g" style="flex:1" onclick="verFoto('${p.id}')">Ver justificante</button>`:''}
+          <button class="btn-g" style="flex:1;border-color:rgba(229,56,59,.45);color:var(--red)" onclick="rechazarPago('${p.id}')">No lo veo · rechazar</button>
+        </div>
+      </div>`;
+    });
+  }
+  h += `<div class="hero">
     <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--faint);font-weight:700">Recaudado</div>
     <div class="big" style="color:var(--accent);margin-top:8px">${eur(rec.total)}</div>
     <div class="sub">Objetivo de la temporada: ${eur(objetivo)} · ${SOCIOS.length} socios · ${eur(CUOTA)} al mes</div>
@@ -990,29 +1014,6 @@ function renderPenya(){
     <b>Somos ${SOCIOS.length} socios a ${eur(CUOTA)} al mes.</b><br>
     Aunque paguemos todos, la temporada no se cubre sola. Cada cuota cuenta y cada retraso se nota. Pagad a tiempo.
   </div>`;
-
-  if(isAdmin()){
-    const pend = pagosTemp().filter(p=>p.estado==="declarado").sort((a,b)=>(a.declaradoAt||'').localeCompare(b.declaradoAt||''));
-    h += `<span class="lbl">Por confirmar (${pend.length})</span>`;
-    if(!pend.length) h += `<div class="empty">Nada pendiente de confirmar.</div>`;
-    pend.forEach(p=>{
-      const m = MESES.find(x=>x.k===p.mes);
-      h += `<div class="card" style="border-color:var(--amber)">
-        <div class="li" style="border:none;padding:0">
-          ${av(p.name)}
-          <div class="li-main">
-            <div class="li-name">${esc(p.name)} · ${esc(m?m.n:p.mes)}</div>
-            <div class="li-sub">${eur(p.importe)} · ${esc((METODOS[p.metodo]||{l:'—'}).l)}</div>
-          </div>
-        </div>
-        <div class="row-btns" style="margin-top:12px">
-          <button class="btn-xs" style="flex:1" onclick="confirmarPago('${p.id}')">✓ Confirmar</button>
-          ${p.foto?`<button class="btn-xs ghost" onclick="verFoto('${p.id}')">Ver justificante</button>`:''}
-          <button class="btn-xs danger" onclick="rechazarPago('${p.id}')">Rechazar</button>
-        </div>
-      </div>`;
-    });
-  }
 
   h += `<span class="lbl">Estado de los socios</span>`;
   const list = SOCIOS.map(n=>({n, r:resumen(n)}))
