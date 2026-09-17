@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="FCB Fans"/>
-<title>Penya FCB Fans Castelló</title>
-<link rel="manifest" href='data:application/manifest+json,{"name":"Penya FCB Fans Castell%C3%B3","short_name":"FCB Fans","start_url":".","display":"standalone","background_color":"%230B1226","theme_color":"%230B1226","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 512 512%27%3E%3Crect width=%27512%27 height=%27512%27 rx=%27110%27 fill=%27%230B1226%27/%3E%3Crect x=%2790%27 y=%27196%27 width=%27332%27 height=%27120%27 fill=%27%23FF6B3D%27/%3E%3Ctext x=%27256%27 y=%27288%27 font-family=%27Arial Black,sans-serif%27 font-size=%2790%27 font-weight=%27900%27 fill=%27%230B1226%27 text-anchor=%27middle%27%3EFCB%3C/text%3E%3C/svg%3E","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}'/>
+<title>FCB Fans Castelló</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"FCB Fans Castell%C3%B3","short_name":"FCB Fans","start_url":".","display":"standalone","background_color":"%230B1226","theme_color":"%230B1226","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 512 512%27%3E%3Crect width=%27512%27 height=%27512%27 rx=%27110%27 fill=%27%230B1226%27/%3E%3Crect x=%2790%27 y=%27196%27 width=%27332%27 height=%27120%27 fill=%27%23FF6B3D%27/%3E%3Ctext x=%27256%27 y=%27288%27 font-family=%27Arial Black,sans-serif%27 font-size=%2790%27 font-weight=%27900%27 fill=%27%230B1226%27 text-anchor=%27middle%27%3EFCB%3C/text%3E%3C/svg%3E","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}'/>
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%230B1226'/%3E%3Crect x='90' y='196' width='332' height='120' fill='%23FF6B3D'/%3E%3Ctext x='256' y='288' font-family='Arial Black,sans-serif' font-size='90' font-weight='900' fill='%230B1226' text-anchor='middle'%3EFCB%3C/text%3E%3C/svg%3E"/>
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
@@ -187,7 +187,7 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
 <div id="gate" style="display:none">
   <div class="head">
     <div class="brand">
-      <span class="brand-top">Penya</span>
+      <span class="brand-top">Socis</span>
       <span class="brand-main">FCB Fans</span>
       <span class="brand-sub">Castelló</span>
     </div>
@@ -267,6 +267,7 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
 
     <span class="lbl">Cómo lo has pagado</span>
     <div class="pills" id="pagoMetodo"></div>
+    <div id="pagoCuenta"></div>
 
     <span class="lbl">Justificante <span style="color:var(--faint);letter-spacing:0;text-transform:none;font-weight:400">· opcional</span></span>
     <input type="file" id="pagoFoto" accept="image/*" style="display:none" onchange="onFoto(this)"/>
@@ -360,7 +361,7 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
       <button class="x" onclick="closeM('mAviso')" aria-label="Cerrar">✕</button>
     </div>
     <div class="modal-body">
-    <div class="modal-s">Cópialo y pégalo en el WhatsApp de la penya.</div>
+    <div class="modal-s">Cópialo y pégalo en el grupo de WhatsApp.</div>
     <textarea class="inp" id="avisoTxt" style="height:300px;font-size:13px;line-height:1.5;resize:none"></textarea>
     <div class="modal-f">
       <button class="btn-g" style="flex:1" onclick="closeM('mAviso')">Cerrar</button>
@@ -395,11 +396,11 @@ window.addEventListener('fb-ready', () => window.__start());
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   PENYA FCB FANS CASTELLÓ · App de pagos
+   FCB FANS CASTELLÓ · App de pagos
    Sube APP_VERSION en cada despliegue.
    ═══════════════════════════════════════════════════════════════ */
 
-const APP_VERSION = 6;
+const APP_VERSION = 7;
 const ADMIN = "David";                 // único que confirma
 const PIN_ADMIN = "1899";              // clave del tesorero
 const CUOTA = 20;                      // € al mes
@@ -424,7 +425,7 @@ const sufijo     = t => t===TEMP_BASE ? "" : slug(t)+"_";   // ids de la 1ª tem
 const SOCIOS_BASE = [
   "David","Campos","Carlitos","Gómez","Guillem","Ignacio","Joseva",
   "Lee","Manel","Marta","Pablo","Pepo","Ros","Rulo",
-  "Samjesús","Wator"
+  "Jesús","Wator"
 ];
 let SOCIOS = SOCIOS_BASE.slice();   // lista viva, se recalcula con Firebase
 
@@ -805,18 +806,12 @@ function renderMis(){
   }
 
   h += `<button class="btn" onclick="openPago('${esc(ME)}')">He pagado</button>`;
+  h += cuentaCard();
 
   h += `<span class="lbl">Los 12 meses</span>
   <div class="hint">Toca el mes que hayas pagado. O usa el botón de arriba para marcar varios de golpe.</div>
   ${mesesGrid(ME, true)}`;
   h += leyenda();
-
-  h += `<span class="lbl">Cuenta de la penya</span>
-  <div class="card">
-    <div style="font-size:16px;font-weight:600;letter-spacing:.04em">${IBAN}</div>
-    <div class="sub">Pon en el concepto: <b style="color:var(--text)">tu nombre + el mes</b></div>
-    <button class="btn-g" style="width:100%;margin-top:12px" onclick="copiar('${IBAN.replace(/ /g,'')}','IBAN copiado')">Copiar IBAN</button>
-  </div>`;
 
   const mios = pagosTemp().filter(p=>p.name===ME).sort((a,b)=>(b.declaradoAt||'').localeCompare(a.declaradoAt||''));
   h += `<span class="lbl">Mi historial</span>`;
@@ -843,6 +838,15 @@ function mesesGrid(name, clickable){
     const can = clickable && e!=='ok' && e!=='na';
     return `<div class="mes ${e}${can?' pick':''}"${can?` onclick="openPago('${esc(name)}','${m.k}')"`:''}><div class="mes-k">${m.l}</div><div class="mes-s">${sub}</div></div>`;
   }).join('') + `</div>`;
+}
+/* Número de cuenta, siempre a un toque de distancia. */
+function cuentaCard(compact){
+  return `<div class="card" style="border-color:var(--accent);${compact?'margin:14px 0 0':'margin-top:12px'}">
+    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:7px">Número de cuenta</div>
+    <div style="font-family:'Archivo Black',sans-serif;font-size:${compact?'15px':'17px'};letter-spacing:.03em;line-height:1.3;word-break:break-all">${IBAN}</div>
+    <div class="sub" style="margin-top:6px">En el concepto: <b style="color:var(--text)">tu nombre + el mes</b></div>
+    <button class="btn-g" style="width:100%;margin-top:11px;border-color:var(--accent);color:var(--accent)" onclick="copiar('${IBAN.replace(/ /g,'')}','Cuenta copiada')">Copiar número de cuenta</button>
+  </div>`;
 }
 function leyenda(){
   return `<div class="card" style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
@@ -891,8 +895,13 @@ function renderPagoMetodo(){
   document.getElementById('pagoMetodo').innerHTML = Object.entries(METODOS).map(([k,v])=>
     `<button class="pill ${k===pagoMetodo?'on':''}" onclick="setMetodo('${k}')">${v.l}</button>`
   ).join('');
+  renderPagoCuenta();
 }
 function setMetodo(k){ pagoMetodo=k; renderPagoMetodo(); }
+function renderPagoCuenta(){
+  const el = document.getElementById('pagoCuenta'); if(!el) return;
+  el.innerHTML = pagoMetodo==='transferencia' ? cuentaCard(true) : '';
+}
 function pagoTotal(){
   const n = Object.values(pagoSel).filter(Boolean).length;
   document.getElementById('pagoTotal').textContent = eur(n*CUOTA);
@@ -942,7 +951,7 @@ function verFoto(id){
   if(w) w.document.write(`<body style="margin:0;background:#0B1226;display:flex;align-items:center;justify-content:center;height:100vh"><img src="${p.foto}" style="max-width:100%;max-height:100%"></body>`);
 }
 
-/* ═══════════════ LA PENYA ═══════════════ */
+/* ═══════════════ SOCIOS ═══════════════ */
 function renderPenya(){
   const rec = recaudado();
   const objetivo = SOCIOS.reduce((s,n)=>s+resumen(n).totalSuyo,0);
@@ -951,7 +960,7 @@ function renderPenya(){
   let h = `<div class="hero">
     <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--faint);font-weight:700">Recaudado</div>
     <div class="big" style="color:var(--accent);margin-top:8px">${eur(rec.total)}</div>
-    <div class="sub">Objetivo temporada: ${eur(objetivo)} · ${SOCIOS.length} socios · ${eur(CUOTA)} al mes</div>
+    <div class="sub">Objetivo de la temporada: ${eur(objetivo)} · ${SOCIOS.length} socios · ${eur(CUOTA)} al mes</div>
     <div class="bar"><div class="bar-fill" style="width:${Math.min(100,pct)}%"></div></div>
     <div class="sub" style="margin-top:8px">Cuotas ${eur(rec.cuotas)} · Lotería ${eur(rec.lot)} · Extras ${eur(rec.ex)}</div>
   </div>
@@ -1144,7 +1153,7 @@ function renderMorosos(){
     ${isAdmin()?`<button class="btn-xs ghost" onclick="reabrirDeuda('${d.id}')">↺</button>`:''}</div>`).join('') + `</div>`;
 
   h += `<span class="lbl">Temporada ${TEMP}</span>`;
-  if(!list.length) h += `<div class="empty">La penya está al día.</div>`;
+  if(!list.length) h += `<div class="empty">Nadie debe nada.</div>`;
   h += list.map((x,i)=>{
     const partes=[];
     if(x.r.debeMeses>0)  partes.push(`${x.r.late} mes${x.r.late>1?'es':''} de cuota`);
@@ -1182,7 +1191,7 @@ function textoAviso(){
   const i = idxActual();
   const mesRef = i>0 ? MESES[i-1].n : MESES[0].n;
 
-  let t = `⚽ PENYA FCB FANS CASTELLÓ · Temporada ${TEMP}\n`;
+  let t = `⚽ FCB FANS CASTELLÓ · Temporada ${TEMP}\n`;
   t += `Cuota: ${CUOTA} € al mes · ${TOTAL_TEMP} € la temporada\n`;
   t += `Cerrado hasta ${mesRef.toLowerCase()}.\n\n`;
 
