@@ -408,7 +408,7 @@ window.addEventListener('fb-ready', () => window.__start());
    Sube APP_VERSION en cada despliegue.
    ═══════════════════════════════════════════════════════════════ */
 
-const APP_VERSION = 10;
+const APP_VERSION = 12;
 const ADMIN = "David";                 // único que confirma
 const PIN_ADMIN = "1899";              // clave del tesorero
 const CUOTA = 20;                      // € al mes
@@ -681,7 +681,7 @@ function resumen(name){
   const totalSuyo = nMeses * CUOTA;
   const deuda = deudas.filter(d=>d.name===name && !d.saldado).reduce((s,d)=>s+(Number(d.importe)||0),0);
   const lot = loteria.find(l=>l.id===lotId(name)) || null;
-  const lotDeuda = (lot && lot.modo==="paga" && lot.estado!=="confirmado") ? LOTERIA : 0;
+  const lotDeuda = (lot && lot.modo==="paga" && lot.estado!=="cobrado") ? LOTERIA : 0;
   const ex = extrasPendientes(name);
   return {
     ok, dec, late, nMeses, totalSuyo,
@@ -707,13 +707,37 @@ function extrasPendientes(name){
 }
 function recaudado(){
   const cuotas = pagosTemp().filter(p=>p.estado==="confirmado").length * CUOTA;
-  const lot = loteriaTemp().filter(l=>l.modo==="paga" && l.estado==="confirmado").length * LOTERIA;
+  const lot = loteriaTemp().filter(l=>l.modo==="paga" && l.estado==="cobrado").length * LOTERIA;
   let ex=0; extrasTemp().forEach(e=>{ Object.values(e.pagos||{}).forEach(v=>{ if(v==="confirmado") ex += Number(e.importe)||0; }); });
   return {cuotas, lot, ex, total: cuotas+lot+ex};
 }
+/* Todo lo que espera tu ✓, venga de donde venga: cuotas, lotería o extras.
+   Sale todo junto en Socios para no tener que buscarlo por la app. */
+function pendientes(){
+  const out = [];
+  pagosTemp().filter(p=>p.estado==="declarado").forEach(p=>{
+    const m = MESES.find(x=>x.k===p.mes);
+    out.push({
+      name:p.name, importe:p.importe, refId:p.id, foto:p.foto, at:p.declaradoAt||'',
+      detalle: `Cuota de ${m?m.n.toLowerCase():p.mes} · ${(METODOS[p.metodo]||{l:'—'}).l}` +
+               (p.declaradoAt?` · lo marcó el ${p.declaradoAt.slice(8,10)}/${p.declaradoAt.slice(5,7)}`:''),
+      ok:`confirmarPago('${p.id}')`, no:`rechazarPago('${p.id}')`,
+    });
+  });
+  extrasTemp().forEach(e=>{
+    Object.entries(e.pagos||{}).forEach(([n,v])=>{
+      if(v!=="declarado") return;
+      out.push({
+        name:n, importe:e.importe, refId:String(e.id), foto:null, at:'',
+        detalle:`${e.titulo} · pago extra`,
+        ok:`confirmarExtra(${e.id},'${esc(n)}')`, no:`rechazarExtra(${e.id},'${esc(n)}')`,
+      });
+    });
+  });
+  return out.sort((a,b)=>(a.at||'').localeCompare(b.at||''));
+}
 const porConfirmarCount = () =>
   pagosTemp().filter(p=>p.estado==="declarado").length
-  + loteriaTemp().filter(l=>l.estado==="declarado").length
   + extrasTemp().reduce((s,e)=>s+Object.values(e.pagos||{}).filter(v=>v==="declarado").length,0);
 
 /* ═══════════════ NAVEGACIÓN ═══════════════ */
@@ -980,25 +1004,24 @@ function renderPenya(){
   const pct = Math.round(rec.total/objetivo*100);
 
   let h = '';
-  const pend = isAdmin() ? pagosTemp().filter(p=>p.estado==="declarado").sort((a,b)=>(a.declaradoAt||'').localeCompare(b.declaradoAt||'')) : [];
+  const pend = isAdmin() ? pendientes() : [];
   if(pend.length){
     h += `<span class="lbl" style="color:var(--amber)">Por confirmar (${pend.length})</span>`;
     h += `<div class="hint">Míralo en el banco y dale al ✓. Hasta entonces no cuenta como pagado.</div>`;
     pend.forEach(p=>{
-      const m = MESES.find(x=>x.k===p.mes);
       h += `<div class="card" style="border-color:var(--amber);border-width:1.5px">
         <div style="display:flex;align-items:center;gap:12px">
           ${av(p.name)}
           <div style="flex:1;min-width:0">
             <div class="mid">${esc(p.name)}</div>
-            <div class="sub" style="margin-top:2px">${esc(m?m.n:p.mes)} · ${esc((METODOS[p.metodo]||{l:'—'}).l)}${p.declaradoAt?' · lo marcó el '+p.declaradoAt.slice(8,10)+'/'+p.declaradoAt.slice(5,7):''}</div>
+            <div class="sub" style="margin-top:2px">${esc(p.detalle)}</div>
           </div>
           <div class="mid" style="color:var(--amber)">${eur(p.importe)}</div>
         </div>
-        <button class="btn" style="margin-top:14px" onclick="confirmarPago('${p.id}')">✓ Sí, lo he cobrado</button>
+        <button class="btn" style="margin-top:14px" onclick="${p.ok}">✓ Sí, lo he cobrado</button>
         <div class="row-btns" style="margin-top:8px">
-          ${p.foto?`<button class="btn-g" style="flex:1" onclick="verFoto('${p.id}')">Ver justificante</button>`:''}
-          <button class="btn-g" style="flex:1;border-color:rgba(229,56,59,.45);color:var(--red)" onclick="rechazarPago('${p.id}')">No lo veo · rechazar</button>
+          ${p.foto?`<button class="btn-g" style="flex:1" onclick="verFoto('${p.refId}')">Ver justificante</button>`:''}
+          <button class="btn-g" style="flex:1;border-color:rgba(229,56,59,.45);color:var(--red)" onclick="${p.no}">No lo veo · rechazar</button>
         </div>
       </div>`;
     });
@@ -1076,6 +1099,17 @@ function rechazarPago(id){
   const p = pagos.find(x=>x.id===id); if(!p) return;
   if(!confirm(`¿Rechazar el pago de ${p.name}?\n\nVolverá a aparecer como no pagado.`)) return;
   fbDel('pagos', id);
+}
+function confirmarExtra(id, name){
+  if(!isAdmin()) return;
+  const e = extras.find(x=>x.id===id); if(!e) return;
+  const n = clone(e); n.pagos = n.pagos||{}; n.pagos[name]='confirmado'; fbSet('extras', n);
+}
+function rechazarExtra(id, name){
+  if(!isAdmin()) return;
+  const e = extras.find(x=>x.id===id); if(!e) return;
+  if(!confirm(`¿Rechazar el pago de ${name} en "${e.titulo}"?`)) return;
+  const n = clone(e); n.pagos = n.pagos||{}; delete n.pagos[name]; fbSet('extras', n);
 }
 
 /* ═══════════════ FICHA DE SOCIO ═══════════════ */
@@ -1267,33 +1301,39 @@ function renderExtras(){
 
   /* ── LOTERÍA ── */
   h += `<span class="lbl">Lotería de Navidad</span>`;
-  h += `<div class="note note-m">Cada socio, o <b style="color:var(--text)">vende</b> su lotería, o <b style="color:var(--text)">paga ${LOTERIA} €</b>. También paga quien prefiere no cogerla.</div>`;
+  h += `<div class="note note-m">O <b style="color:var(--text)">la vendes</b>, o <b style="color:var(--text)">pones ${eur(LOTERIA)}</b>. Lo mismo si prefieres no cogerla. Si no la vendes, esos ${eur(LOTERIA)} te salen como deuda en Morosos hasta que ${ADMIN} los cobre.</div>`;
 
   const miLot = loteria.find(l=>l.id===lotId(ME)) || null;
-  h += `<div class="card">
+  h += `<div class="card" style="border-color:var(--accent)">
     <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:10px">Lo mío</div>
     <div class="pills">
       <button class="pill ${miLot&&miLot.modo==='vende'?'on':''}" onclick="setLot('${esc(ME)}','vende')">La vendo</button>
-      <button class="pill ${miLot&&miLot.modo==='paga'?'on':''}" onclick="setLot('${esc(ME)}','paga')">Pago los ${LOTERIA} €</button>
+      <button class="pill ${miLot&&miLot.modo==='paga'?'on':''}" onclick="setLot('${esc(ME)}','paga')">No la vendo</button>
     </div>
-    ${miLot?`<div class="sub">${miLot.modo==='vende'?'Marcado como vendida.':(miLot.estado==='confirmado'?`Pagados ${eur(LOTERIA)} · confirmado.`:`Pendiente: ${eur(LOTERIA)}.`)}</div>`:`<div class="sub">Todavía no has elegido.</div>`}
+    <div class="sub">${
+      !miLot ? 'Todavía no has elegido.'
+      : miLot.modo==='vende' ? 'Marcado como vendida. No debes nada por la lotería.'
+      : miLot.estado==='cobrado' ? `Ya pagaste los ${eur(LOTERIA)}.`
+      : `Debes ${eur(LOTERIA)}. Aparece en tu deuda hasta que ${ADMIN} los cobre.`
+    }</div>
   </div>`;
 
+  const sinDecidir = SOCIOS.filter(n=>!loteria.find(x=>x.id===lotId(n)));
   h += `<div class="card">` + SOCIOS.map(n=>{
     const l = loteria.find(x=>x.id===lotId(n));
     const st = !l ? tag('Sin decidir','t-mut')
-      : l.modo==='vende' ? tag('Vende','t-ok')
-      : l.estado==='confirmado' ? tag('Pagada','t-ok') : tag('Debe '+eur(LOTERIA),'t-late');
+      : l.modo==='vende' ? tag('La vende','t-ok')
+      : l.estado==='cobrado' ? tag('Pagada','t-ok') : tag('Debe '+eur(LOTERIA),'t-late');
+    const debe = l && l.modo==='paga' && l.estado!=='cobrado';
     return `<div class="li">
       ${av(n, n===ME?'on':'')}
-      <div class="li-main"><div class="li-name">${esc(n)}</div></div>
+      <div class="li-main"><div class="li-name">${esc(n)}${n===ME?' <span style="color:var(--faint);font-size:10px">(tú)</span>':''}</div></div>
       ${st}
-      ${isAdmin()?`<div class="row-btns">
-        <button class="btn-xs ghost" onclick="setLot('${esc(n)}','vende')">V</button>
-        <button class="btn-xs ${l&&l.modo==='paga'&&l.estado==='confirmado'?'':'ghost'}" onclick="cobrarLot('${esc(n)}')">€</button>
-      </div>`:''}
+      ${isAdmin()&&debe?`<button class="btn-xs" onclick="cobrarLot('${esc(n)}')">Cobrada</button>`:''}
+      ${isAdmin()&&l&&l.estado==='cobrado'?`<button class="btn-xs ghost" onclick="cobrarLot('${esc(n)}')">↺</button>`:''}
     </div>`;
   }).join('') + `</div>`;
+  if(sinDecidir.length) h += `<div class="hint">Faltan por decidir: ${sinDecidir.map(esc).join(', ')}.</div>`;
 
   /* ── PAGOS EXTRA ── */
   h += `<span class="lbl">Pagos extra</span>`;
@@ -1335,18 +1375,20 @@ function renderExtras(){
 }
 
 /* ── lotería ── */
+/* El socio solo dice si la vende o no. Si no la vende, debe los 25 € y sale
+   en Morosos hasta que tú marques que los has cobrado. */
 function setLot(name, modo){
   if(name!==ME && !isAdmin()) return;
-  const prev = loteria.find(l=>l.id===slug(name));
-  const estado = modo==='vende' ? 'confirmado'
-    : (isAdmin() ? 'confirmado' : (prev && prev.estado==='confirmado' ? 'confirmado' : 'declarado'));
+  const prev = loteria.find(l=>l.id===lotId(name));
+  const estado = (modo==='paga' && prev && prev.estado==='cobrado') ? 'cobrado' : 'pendiente';
   fbSet('loteria', {id:lotId(name), temp:TEMP, name, modo, estado, at:nowISO(), by:ME});
 }
 function cobrarLot(name){
   if(!isAdmin()) return;
   const l = loteria.find(x=>x.id===lotId(name));
-  const yaPagada = l && l.modo==='paga' && l.estado==='confirmado';
-  fbSet('loteria', {id:lotId(name), temp:TEMP, name, modo:'paga', estado: yaPagada?'declarado':'confirmado', at:nowISO(), by:ME});
+  const ya = l && l.estado==='cobrado';
+  if(!ya && !confirm(`¿Has cobrado los ${LOTERIA} € de la lotería de ${name}?`)) return;
+  fbSet('loteria', {id:lotId(name), temp:TEMP, name, modo:'paga', estado: ya?'pendiente':'cobrado', at:nowISO(), by:ME});
 }
 
 /* ── extras ── */
