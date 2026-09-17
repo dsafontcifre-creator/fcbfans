@@ -141,10 +141,15 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
 /* ── MODAL ──────────────────────────────────────────── */
 .ov{position:fixed;inset:0;background:rgba(5,8,18,.75);z-index:300;display:none;align-items:flex-end;backdrop-filter:blur(3px);}
 .ov.open{display:flex;}
-.modal{background:var(--surface);border-top:3px solid var(--accent);border-radius:18px 18px 0 0;width:100%;max-width:520px;margin:0 auto;padding:22px 18px calc(22px + env(safe-area-inset-bottom));max-height:92vh;overflow-y:auto;}
-.modal-t{font-family:'Archivo Black',sans-serif;font-size:26px;text-transform:uppercase;letter-spacing:-.02em;margin-bottom:5px;line-height:1;}
+.modal{background:var(--surface);border-top:3px solid var(--accent);border-radius:18px 18px 0 0;width:100%;max-width:520px;margin:0 auto;padding:0;max-height:92vh;overflow-y:auto;}
+.modal-head{position:sticky;top:0;z-index:5;background:var(--surface);padding:18px 18px 13px;display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--line);}
+.modal-body{padding:16px 18px calc(22px + env(safe-area-inset-bottom));}
+.modal-t{font-family:'Archivo Black',sans-serif;font-size:24px;text-transform:uppercase;letter-spacing:-.02em;line-height:1;flex:1;min-width:0;}
+.x{background:none;border:1px solid var(--line);color:var(--text);border-radius:99px;width:42px;height:42px;font-size:17px;line-height:1;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.x:active{background:var(--accent);color:#0B1226;border-color:var(--accent);}
 .modal-s{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.5;}
 .modal-f{display:flex;gap:8px;margin-top:18px;}
+.hint{font-size:11px;color:var(--faint);margin:-4px 0 10px;}
 
 /* ── AVISOS ─────────────────────────────────────────── */
 .note{border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.5;margin-bottom:12px;}
@@ -160,6 +165,16 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
 .spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:99px;animation:sp .8s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg)}}
 .thumb{width:100%;border-radius:9px;margin-top:8px;display:block;border:1px solid var(--line);}
+
+/* ── PIN ────────────────────────────────────────────── */
+.pin-dots{display:flex;gap:14px;justify-content:center;margin:24px 0 26px;}
+.pin-dot{width:16px;height:16px;border-radius:99px;border:2px solid var(--line);transition:.15s;}
+.pin-dot.on{background:var(--accent);border-color:var(--accent);}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.pin-key{aspect-ratio:1.5;background:var(--surface);border:1px solid var(--line);border-radius:12px;font-family:'Archivo Black',sans-serif;font-size:24px;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.pin-key:active{background:var(--accent);color:#0B1226;border-color:var(--accent);}
+.pin-key.fn{font-size:18px;font-family:'Archivo',sans-serif;color:var(--muted);}
+.pin-err{color:var(--red);font-size:12px;text-align:center;margin-top:16px;height:18px;font-weight:600;}
 </style>
 </head>
 <body>
@@ -176,11 +191,7 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
       <span class="brand-sub">Castelló</span>
     </div>
   </div>
-  <div class="wrap">
-    <div class="dsp" style="font-size:30px;margin-bottom:4px">¿Quién eres?</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Toca tu nombre para entrar.</div>
-    <div class="who" id="whoList"></div>
-  </div>
+  <div class="wrap" id="gateBody"></div>
 </div>
 
 <!-- ══════════════════ MENÚ ══════════════════ -->
@@ -235,7 +246,11 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
 <!-- ══════════════════ MODAL · MARCAR PAGO ══════════════════ -->
 <div class="ov" id="mPago" onclick="bgClose(event,'mPago')">
   <div class="modal">
-    <div class="modal-t" id="pagoTitle">He pagado</div>
+    <div class="modal-head">
+      <div class="modal-t" id="pagoTitle">He pagado</div>
+      <button class="x" onclick="closeM('mPago')" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body">
     <div class="modal-s" id="pagoSub">Marca los meses que has pagado. David lo confirmará cuando lo vea en el banco.</div>
 
     <span class="lbl" style="margin-top:0">Atajos</span>
@@ -266,13 +281,18 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
       <button class="btn-g" style="flex:1" onclick="closeM('mPago')">Cancelar</button>
       <button class="btn" style="flex:2" id="pagoSave" onclick="savePago()">Enviar</button>
     </div>
+    </div>
   </div>
 </div>
 
 <!-- ══════════════════ MODAL · EXTRA ══════════════════ -->
 <div class="ov" id="mExtra" onclick="bgClose(event,'mExtra')">
   <div class="modal">
-    <div class="modal-t">Nuevo pago extra</div>
+    <div class="modal-head">
+      <div class="modal-t">Nuevo pago extra</div>
+      <button class="x" onclick="closeM('mExtra')" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body">
     <div class="modal-s">Para cosas puntuales fuera de la cuota: Magdalena, autobús, cena…</div>
     <div class="field"><label>Concepto</label><input class="inp" id="exTitulo" placeholder="Ej: Magdalena 2027"/></div>
     <div class="field"><label>Importe por socio (€)</label><input class="inp" type="text" inputmode="decimal" id="exImporte" placeholder="Ej: 15"/></div>
@@ -287,13 +307,18 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
       <button class="btn-g" style="flex:1" onclick="closeM('mExtra')">Cancelar</button>
       <button class="btn" style="flex:2" onclick="saveExtra()">Crear</button>
     </div>
+    </div>
   </div>
 </div>
 
 <!-- ══════════════════ MODAL · DEUDA ══════════════════ -->
 <div class="ov" id="mDeuda" onclick="bgClose(event,'mDeuda')">
   <div class="modal">
-    <div class="modal-t">Deuda anterior</div>
+    <div class="modal-head">
+      <div class="modal-t">Deuda anterior</div>
+      <button class="x" onclick="closeM('mDeuda')" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body">
     <div class="modal-s">Lo que arrastra un socio de la temporada 25/26.</div>
     <div class="field"><label>Socio</label><div class="pills" id="deSocios"></div></div>
     <div class="field"><label>Importe (€)</label><input class="inp" type="text" inputmode="decimal" id="deImporte" placeholder="Ej: 265"/></div>
@@ -302,18 +327,24 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
       <button class="btn-g" style="flex:1" onclick="closeM('mDeuda')">Cancelar</button>
       <button class="btn" style="flex:2" onclick="saveDeuda()">Guardar</button>
     </div>
+    </div>
   </div>
 </div>
 
 <!-- ══════════════════ MODAL · AVISO WHATSAPP ══════════════════ -->
 <div class="ov" id="mAviso" onclick="bgClose(event,'mAviso')">
   <div class="modal">
-    <div class="modal-t">Aviso para el grupo</div>
+    <div class="modal-head">
+      <div class="modal-t">Aviso para el grupo</div>
+      <button class="x" onclick="closeM('mAviso')" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body">
     <div class="modal-s">Cópialo y pégalo en el WhatsApp de la penya.</div>
     <textarea class="inp" id="avisoTxt" style="height:300px;font-size:13px;line-height:1.5;resize:none"></textarea>
     <div class="modal-f">
       <button class="btn-g" style="flex:1" onclick="closeM('mAviso')">Cerrar</button>
       <button class="btn" style="flex:2" onclick="copiarAviso()">Copiar</button>
+    </div>
     </div>
   </div>
 </div>
@@ -347,8 +378,9 @@ window.addEventListener('fb-ready', () => window.__start());
    Sube APP_VERSION en cada despliegue.
    ═══════════════════════════════════════════════════════════════ */
 
-const APP_VERSION = 1;
+const APP_VERSION = 3;
 const ADMIN = "David";                 // único que confirma
+const PIN_ADMIN = "1899";              // clave del tesorero
 const CUOTA = 20;                      // € al mes
 const LOTERIA = 25;                    // € si no vende lotería
 const IBAN = "ES03 0182 1294 1802 0450 9099";
@@ -404,13 +436,14 @@ const isAdmin = () => ME === ADMIN;
 const av = (n,cls="") => `<span class="av ${cls}">${esc(ini(n))}</span>`;
 const tag = (t,c) => `<span class="tag ${c}">${esc(t)}</span>`;
 
-/* Meses vencidos: un mes se considera impagado a partir del día 1 del mes siguiente. */
+/* Un mes se debe desde el día 1 de ese mismo mes.
+   El 17 de septiembre, quien no haya pagado septiembre ya es moroso. */
 function idxActual(){
   const d = new Date();
   const i = (d.getFullYear()-2026)*12 + (d.getMonth()-8);
-  return Math.max(0, Math.min(MESES.length, i));
+  return Math.max(0, Math.min(MESES.length-1, i));
 }
-const mesVencido = i => i < idxActual();
+const mesVencido = i => i <= idxActual();
 
 /* ═══════════════ FIRESTORE ═══════════════ */
 function sync(t="Guardado"){
@@ -476,11 +509,55 @@ function renderGate(){
   document.getElementById('loader').style.display='none';
   document.getElementById('gate').style.display='flex';
   document.getElementById('menu').style.display='none';
-  document.getElementById('whoList').innerHTML = SOCIOS.map(n=>
-    `<button class="who-btn" onclick="pickMe('${esc(n)}')">${av(n, n===ADMIN?'sm on':'sm')}<span class="who-name">${esc(n)}</span></button>`
-  ).join('');
+  document.getElementById('gateBody').innerHTML = `
+    <div class="dsp" style="font-size:30px;margin-bottom:4px">¿Quién eres?</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Toca tu nombre para entrar.</div>
+    <div class="who">` + SOCIOS.map(n=>
+      `<button class="who-btn" onclick="pickMe('${esc(n)}')">${av(n, n===ADMIN?'sm on':'sm')}<span class="who-name">${esc(n)}</span>${n===ADMIN?'<span style="font-size:13px">🔒</span>':''}</button>`
+    ).join('') + `</div>`;
 }
-function pickMe(n){ ME=n; localStorage.setItem('fcb_me',n); enterApp(); }
+function pickMe(n){
+  if(n===ADMIN && localStorage.getItem('fcb_pin')!=='1'){ renderPin(); return; }
+  ME=n; localStorage.setItem('fcb_me',n); enterApp();
+}
+
+/* ── PIN del tesorero ── */
+let pinBuf = "";
+function renderPin(){
+  pinBuf = "";
+  document.getElementById('gateBody').innerHTML = `
+    <button class="btn-g" style="margin-bottom:20px" onclick="renderGate()">← Volver</button>
+    <div class="dsp" style="font-size:30px;margin-bottom:4px">Hola, ${esc(ADMIN)}</div>
+    <div style="font-size:12px;color:var(--muted)">Introduce tu clave de tesorero.</div>
+    <div class="pin-dots" id="pinDots"></div>
+    <div class="pin-pad" id="pinPad"></div>
+    <div class="pin-err" id="pinErr"></div>`;
+  pinDots();
+  document.getElementById('pinPad').innerHTML =
+    ['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k=>
+      k==='' ? `<div></div>`
+      : k==='⌫' ? `<button class="pin-key fn" onclick="pinDel()">⌫</button>`
+      : `<button class="pin-key" onclick="pinKey('${k}')">${k}</button>`
+    ).join('');
+}
+function pinDots(){
+  document.getElementById('pinDots').innerHTML =
+    [0,1,2,3].map(i=>`<div class="pin-dot ${i<pinBuf.length?'on':''}"></div>`).join('');
+}
+function pinKey(d){
+  if(pinBuf.length>=4) return;
+  pinBuf += d; pinDots();
+  if(pinBuf.length===4) setTimeout(()=>{
+    if(pinBuf===PIN_ADMIN){
+      localStorage.setItem('fcb_pin','1');
+      ME=ADMIN; localStorage.setItem('fcb_me',ADMIN); enterApp();
+    } else {
+      document.getElementById('pinErr').textContent='Clave incorrecta';
+      pinBuf=''; pinDots();
+    }
+  },130);
+}
+function pinDel(){ pinBuf=pinBuf.slice(0,-1); document.getElementById('pinErr').textContent=''; pinDots(); }
 function enterApp(){
   document.getElementById('gate').style.display='none';
   document.getElementById('meAv').textContent = ini(ME);
@@ -489,7 +566,7 @@ function enterApp(){
   goMenu();
 }
 function logout(){
-  ME=null; localStorage.removeItem('fcb_me');
+  ME=null; localStorage.removeItem('fcb_me'); localStorage.removeItem('fcb_pin');
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.getElementById('menu').style.display='none';
   renderGate();
@@ -570,10 +647,10 @@ function render(k){
 }
 
 const MENU = [
-  {k:"mis",     l:"Mis pagos"},
-  {k:"penya",   l:"La penya"},
-  {k:"morosos", l:"Morosos"},
-  {k:"extras",  l:"Extras"},
+  {k:"mis",     l:"Mis pagos", d:"Registra aquí lo que pagas"},
+  {k:"penya",   l:"La penya",  d:"Lo que lleva pagado cada uno"},
+  {k:"morosos", l:"Morosos",   d:"Quién debe y cuánto"},
+  {k:"extras",  l:"Extras",    d:"Lotería y pagos puntuales"},
 ];
 function renderMenu(){
   const r = resumen(ME);
@@ -593,7 +670,10 @@ function renderMenu(){
     }
     return `<div class="menu-row" onclick="goSection('${it.k}')">
       <span class="menu-num">${String(i+1).padStart(2,'0')}</span>
-      <span class="menu-label">${it.l}</span>${b}
+      <span style="flex:1;min-width:0">
+        <span class="menu-label" style="display:block">${it.l}</span>
+        <span style="display:block;font-size:11px;color:var(--faint);margin-top:4px">${it.d}</span>
+      </span>${b}
       <span class="menu-arrow">›</span>
     </div>`;
   }).join('');
@@ -629,7 +709,9 @@ function renderMis(){
 
   h += `<button class="btn" onclick="openPago('${esc(ME)}')">He pagado</button>`;
 
-  h += `<span class="lbl">Los 12 meses</span>${mesesGrid(ME)}`;
+  h += `<span class="lbl">Los 12 meses</span>
+  <div class="hint">Toca el mes que hayas pagado. O usa el botón de arriba para marcar varios de golpe.</div>
+  ${mesesGrid(ME, true)}`;
   h += leyenda();
 
   h += `<span class="lbl">Cuenta de la penya</span>
@@ -657,11 +739,12 @@ function renderMis(){
   document.getElementById('body-mis').innerHTML = h;
 }
 
-function mesesGrid(name){
+function mesesGrid(name, clickable){
   return `<div class="meses">` + MESES.map((m,i)=>{
     const e = estadoMes(name,i);
     const sub = e==='ok'?'Pagado':e==='dec'?'Enviado':e==='late'?'Debe':'—';
-    return `<div class="mes ${e}"><div class="mes-k">${m.l}</div><div class="mes-s">${sub}</div></div>`;
+    const can = clickable && e!=='ok';
+    return `<div class="mes ${e}${can?' pick':''}"${can?` onclick="openPago('${esc(name)}','${m.k}')"`:''}><div class="mes-k">${m.l}</div><div class="mes-s">${sub}</div></div>`;
   }).join('') + `</div>`;
 }
 function leyenda(){
@@ -673,9 +756,10 @@ function leyenda(){
 /* ═══════════════ MODAL PAGO ═══════════════ */
 let pagoTarget = null, pagoSel = {}, pagoMetodo = "transferencia", pagoFotoData = null;
 
-function openPago(name){
+function openPago(name, preMes){
   pagoTarget = name;
   pagoSel = {}; pagoMetodo = "transferencia"; pagoFotoData = null;
+  if(preMes) pagoSel[preMes] = true;
   document.getElementById('fotoPrev').innerHTML = '';
   document.getElementById('pagoTitle').textContent = (name===ME) ? "He pagado" : "Pago de " + name;
   document.getElementById('pagoSub').textContent = isAdmin()
@@ -858,10 +942,12 @@ function renderSocio(){
     });
   }
 
-  h += `<span class="lbl">Los 12 meses</span>${mesesGrid(n)}`;
+  h += `<span class="lbl">Los 12 meses</span>`;
+  if(isAdmin()) h += `<div class="hint">Toca un mes para darlo por pagado. Queda confirmado al momento.</div>`;
+  h += mesesGrid(n, isAdmin());
 
   if(isAdmin()){
-    h += `<button class="btn" style="margin-top:14px" onclick="openPago('${esc(n)}')">Registrar pago de ${esc(n)}</button>`;
+    h += `<button class="btn" style="margin-top:14px" onclick="openPago('${esc(n)}')">Registrar varios meses de ${esc(n)}</button>`;
     const suyos = pagos.filter(p=>p.name===n).sort((a,b)=>MESES.findIndex(m=>m.k===a.mes)-MESES.findIndex(m=>m.k===b.mes));
     if(suyos.length){
       h += `<span class="lbl">Movimientos</span><div class="card">` + suyos.map(p=>{
@@ -897,9 +983,33 @@ function renderMorosos(){
     <div class="sub">${list.length?`${list.length} de ${SOCIOS.length} socios deben algo`:'Nadie debe nada. Milagro.'}</div>
   </div>`;
 
-  h += `<button class="btn" onclick="abrirAviso()">Generar aviso para WhatsApp</button>`;
+  /* ── Deuda de temporadas anteriores, lo primero ── */
+  const dAct = deudas.filter(d=>!d.saldado).sort((a,b)=>b.importe-a.importe);
+  const totalViejo = dAct.reduce((s,d)=>s+(Number(d.importe)||0),0);
+  h += `<span class="lbl">Temporadas anteriores${totalViejo?` · ${eur(totalViejo)}`:''}</span>`;
+  if(isAdmin()) h += `<button class="btn-g" style="width:100%;margin-bottom:10px" onclick="openDeuda()">+ Añadir deuda de otra temporada</button>`;
+  if(!dAct.length) h += `<div class="empty">Nadie arrastra deuda de años anteriores.</div>`;
+  h += dAct.map(d=>`<div class="card" style="border-color:rgba(229,56,59,.4)">
+      <div class="li" style="border:none;padding:0">
+        ${av(d.name)}
+        <div class="li-main">
+          <div class="li-name">${esc(d.name)}</div>
+          <div class="li-sub">${esc(d.concepto||'Temporada anterior')}</div>
+        </div>
+        <div class="mid" style="color:var(--red)">${eur(d.importe)}</div>
+      </div>
+      ${isAdmin()?`<div class="row-btns" style="margin-top:12px">
+        <button class="btn-xs" style="flex:1" onclick="saldarDeuda('${d.id}')">✓ Ya me ha pagado</button>
+        <button class="btn-xs danger" onclick="borrarDeuda('${d.id}')">×</button>
+      </div>`:''}
+    </div>`).join('');
 
-  h += `<span class="lbl">Ranking</span>`;
+  const saldadas = deudas.filter(d=>d.saldado);
+  if(saldadas.length) h += `<div class="card" style="opacity:.55">` + saldadas.map(d=>
+    `<div class="li"><div class="li-main"><div class="li-name" style="font-size:13px">${esc(d.name)} · ${eur(d.importe)}</div></div>${tag('Saldada','t-ok')}
+    ${isAdmin()?`<button class="btn-xs ghost" onclick="reabrirDeuda('${d.id}')">↺</button>`:''}</div>`).join('') + `</div>`;
+
+  h += `<span class="lbl">Temporada ${TEMPORADA}</span>`;
   if(!list.length) h += `<div class="empty">La penya está al día.</div>`;
   h += list.map((x,i)=>{
     const partes=[];
@@ -924,6 +1034,10 @@ function renderMorosos(){
   h += alDia.length
     ? `<div class="card" style="display:flex;flex-wrap:wrap;gap:6px">${alDia.map(n=>`<span class="pill on" style="pointer-events:none">${esc(n)}</span>`).join('')}</div>`
     : `<div class="empty">Ninguno todavía.</div>`;
+
+  h += `<div style="margin-top:26px;padding-top:18px;border-top:1px solid var(--line)">
+    <button class="btn-g" style="width:100%" onclick="abrirAviso()">Generar aviso para WhatsApp</button>
+  </div>`;
 
   document.getElementById('body-morosos').innerHTML = h;
 }
@@ -1049,23 +1163,7 @@ function renderExtras(){
     </div>`;
   });
 
-  /* ── DEUDAS 25/26 ── */
-  h += `<span class="lbl">Temporada 25/26</span>`;
-  if(isAdmin()) h += `<button class="btn-g" style="width:100%;margin-bottom:10px" onclick="openDeuda()">+ Añadir deuda anterior</button>`;
-  const dAct = deudas.filter(d=>!d.saldado);
-  if(!dAct.length) h += `<div class="empty">Sin deudas de la temporada pasada.</div>`;
-  h += dAct.length ? `<div class="card">` + dAct.sort((a,b)=>b.importe-a.importe).map(d=>`
-    <div class="li">
-      ${av(d.name)}
-      <div class="li-main"><div class="li-name">${esc(d.name)}</div><div class="li-sub">${esc(d.concepto||'')}</div></div>
-      <div class="mid" style="color:var(--red);font-size:20px">${eur(d.importe)}</div>
-      ${isAdmin()?`<button class="btn-xs" onclick="saldarDeuda('${d.id}')">✓</button>`:''}
-    </div>`).join('') + `</div>` : '';
-
-  const saldadas = deudas.filter(d=>d.saldado);
-  if(saldadas.length) h += `<div class="card" style="opacity:.6">` + saldadas.map(d=>`
-    <div class="li"><div class="li-main"><div class="li-name" style="font-size:13px">${esc(d.name)} · ${eur(d.importe)}</div></div>${tag('Saldada','t-ok')}
-    ${isAdmin()?`<button class="btn-xs ghost" onclick="reabrirDeuda('${d.id}')">↺</button>`:''}</div>`).join('') + `</div>`;
+  h += `<div class="hint" style="margin-top:20px">Las deudas de temporadas anteriores están en <b style="color:var(--muted)">Morosos</b>.</div>`;
 
   document.getElementById('body-extras').innerHTML = h;
 }
@@ -1158,6 +1256,12 @@ function reabrirDeuda(id){
   if(!isAdmin()) return;
   const d = deudas.find(x=>x.id===id); if(!d) return;
   const n = clone(d); n.saldado=false; n.saldadoAt=null; fbSet('deudas', n);
+}
+function borrarDeuda(id){
+  if(!isAdmin()) return;
+  const d = deudas.find(x=>x.id===id); if(!d) return;
+  if(!confirm(`¿Borrar la deuda de ${d.name} (${eur(d.importe)})?\n\nEsto la elimina del todo. Si es que ya te ha pagado, usa "Ya me ha pagado".`)) return;
+  fbDel('deudas', id);
 }
 
 /* ═══════════════ MODALES ═══════════════ */
