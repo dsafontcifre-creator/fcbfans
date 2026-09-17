@@ -1,4 +1,1169 @@
 <!DOCTYPE html>
-<html lang="es"><head><meta charset="UTF-8"><title>FCB Fans Castelló</title></head>
-<body style="font-family:sans-serif;background:#0A1533;color:#FF6B3D;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
-<h1>FCB FANS CASTELLÓ</h1></body></html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="theme-color" content="#0B1226"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="FCB Fans"/>
+<title>Penya FCB Fans Castelló</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"Penya FCB Fans Castell%C3%B3","short_name":"FCB Fans","start_url":".","display":"standalone","background_color":"%230B1226","theme_color":"%230B1226","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 512 512%27%3E%3Crect width=%27512%27 height=%27512%27 rx=%27110%27 fill=%27%230B1226%27/%3E%3Crect x=%2790%27 y=%27196%27 width=%27332%27 height=%27120%27 fill=%27%23FF6B3D%27/%3E%3Ctext x=%27256%27 y=%27288%27 font-family=%27Arial Black,sans-serif%27 font-size=%2790%27 font-weight=%27900%27 fill=%27%230B1226%27 text-anchor=%27middle%27%3EFCB%3C/text%3E%3C/svg%3E","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}'/>
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%230B1226'/%3E%3Crect x='90' y='196' width='332' height='120' fill='%23FF6B3D'/%3E%3Ctext x='256' y='288' font-family='Arial Black,sans-serif' font-size='90' font-weight='900' fill='%230B1226' text-anchor='middle'%3EFCB%3C/text%3E%3C/svg%3E"/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0B1226;          /* azul noche */
+  --surface:#131C3A;
+  --surface2:#1B2649;
+  --line:#26325C;
+  --text:#F4F3EE;
+  --muted:#8D97BA;
+  --faint:#5D688F;
+  --accent:#FF6B3D;      /* naranja */
+  --accentD:#E04E20;
+  --amber:#F2A65A;
+  --red:#E5383B;
+  --ok:#3DDC97;
+}
+html,body{background:var(--bg);}
+body{font-family:'Archivo',system-ui,sans-serif;color:var(--text);max-width:520px;margin:0 auto;min-height:100vh;-webkit-tap-highlight-color:transparent;overflow-x:hidden;}
+::-webkit-scrollbar{display:none;}
+input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:none;}
+.dsp{font-family:'Archivo Black',system-ui,sans-serif;letter-spacing:-.02em;text-transform:uppercase;line-height:.95;}
+
+/* ── LOGO ───────────────────────────────────────────── */
+.brand{display:flex;flex-direction:column;align-items:flex-start;gap:5px;}
+.brand-top{font-size:10px;letter-spacing:5px;color:var(--muted);text-transform:uppercase;font-weight:600;}
+.brand-main{background:var(--accent);color:#0B1226;font-family:'Archivo Black',sans-serif;font-size:clamp(26px,8vw,34px);letter-spacing:-.02em;padding:3px 11px 5px;line-height:1;text-transform:uppercase;}
+.brand-sub{border:1.5px solid var(--accent);color:var(--accent);font-size:11px;letter-spacing:4px;font-weight:700;padding:4px 12px;border-radius:99px;text-transform:uppercase;}
+
+/* ── LAYOUT ─────────────────────────────────────────── */
+.head{padding:calc(26px + env(safe-area-inset-top)) 22px 22px;border-bottom:1px solid var(--line);}
+.wrap{padding:20px 16px calc(40px + env(safe-area-inset-bottom));}
+.lbl{font-size:9px;letter-spacing:4px;color:var(--faint);text-transform:uppercase;font-weight:700;display:block;margin:22px 0 10px;}
+.lbl:first-child{margin-top:0;}
+
+/* ── LOGIN ──────────────────────────────────────────── */
+#gate{min-height:100vh;display:flex;flex-direction:column;}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.who-btn{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:13px 12px;cursor:pointer;text-align:left;transition:.14s;min-height:52px;color:var(--text);}
+.who-btn:active{transform:scale(.97);}
+.who-btn:hover{border-color:var(--accent);}
+.who-name{font-size:14px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* ── MENU ───────────────────────────────────────────── */
+.menu-user{display:flex;align-items:center;gap:10px;margin-top:18px;}
+.menu-row{display:flex;align-items:center;gap:14px;padding:19px 0;border-bottom:1px solid var(--line);cursor:pointer;}
+.menu-row:active{opacity:.6;}
+.menu-num{font-size:10px;letter-spacing:2px;color:var(--faint);font-weight:700;min-width:20px;}
+.menu-label{font-family:'Archivo Black',sans-serif;font-size:clamp(26px,8.5vw,34px);letter-spacing:-.02em;text-transform:uppercase;flex:1;line-height:1;}
+.menu-arrow{font-size:20px;color:var(--faint);}
+.badge{min-width:22px;height:22px;padding:0 6px;border-radius:99px;background:var(--accent);color:#0B1226;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.badge.red{background:var(--red);color:#fff;}
+
+/* ── SECCIONES ──────────────────────────────────────── */
+.section{display:none;min-height:100vh;}
+.section.active{display:block;}
+.sec-head{padding:calc(16px + env(safe-area-inset-top)) 16px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:50;}
+.back{display:inline-flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:11px 16px;color:var(--text);cursor:pointer;min-height:44px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;}
+.back:active{background:var(--accent);color:#0B1226;}
+.sec-title{font-family:'Archivo Black',sans-serif;font-size:32px;text-transform:uppercase;letter-spacing:-.02em;margin-top:13px;line-height:1;}
+
+/* ── CARDS ──────────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:10px;}
+.card-flat{background:none;border:none;padding:0;}
+.hero{background:linear-gradient(0deg,var(--surface2),var(--surface));border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:12px;}
+.big{font-family:'Archivo Black',sans-serif;font-size:52px;line-height:.9;letter-spacing:-.03em;}
+.mid{font-family:'Archivo Black',sans-serif;font-size:26px;line-height:1;letter-spacing:-.02em;}
+.sub{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5;}
+
+/* ── PROGRESO ───────────────────────────────────────── */
+.bar{height:8px;background:#0B1226;border-radius:99px;overflow:hidden;margin-top:14px;border:1px solid var(--line);}
+.bar-fill{height:100%;background:var(--accent);border-radius:99px;transition:width .5s;}
+.bar-sm{height:5px;background:#0B1226;border-radius:99px;overflow:hidden;border:1px solid var(--line);}
+
+/* ── MESES ──────────────────────────────────────────── */
+.meses{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.mes{border-radius:9px;padding:11px 6px;text-align:center;border:1px solid var(--line);background:var(--surface);cursor:default;min-height:58px;display:flex;flex-direction:column;justify-content:center;gap:3px;}
+.mes-k{font-family:'Archivo Black',sans-serif;font-size:14px;letter-spacing:.02em;text-transform:uppercase;}
+.mes-s{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;}
+.mes.ok{background:var(--accent);border-color:var(--accent);color:#0B1226;}
+.mes.dec{background:rgba(242,166,90,.14);border-color:var(--amber);color:var(--amber);}
+.mes.late{background:rgba(229,56,59,.14);border-color:var(--red);color:var(--red);}
+.mes.next{color:var(--faint);}
+.mes.pick{cursor:pointer;}
+.mes.sel{background:var(--accent);border-color:var(--accent);color:#0B1226;}
+
+/* ── BOTONES ────────────────────────────────────────── */
+.btn{width:100%;background:var(--accent);color:#0B1226;border:none;border-radius:10px;padding:16px;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;min-height:52px;}
+.btn:active{background:var(--accentD);}
+.btn[disabled]{background:var(--surface2);color:var(--faint);cursor:default;}
+.btn-g{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:11px 14px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;cursor:pointer;min-height:42px;}
+.btn-g:active{border-color:var(--accent);color:var(--accent);}
+.btn-g.on{border-color:var(--accent);color:var(--accent);}
+.btn-xs{background:var(--accent);color:#0B1226;border:none;border-radius:7px;padding:9px 12px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;min-height:38px;}
+.btn-xs.ghost{background:none;border:1px solid var(--line);color:var(--muted);}
+.btn-xs.danger{background:none;border:1px solid rgba(229,56,59,.5);color:var(--red);}
+.row-btns{display:flex;gap:7px;flex-wrap:wrap;}
+
+/* ── PILLS ──────────────────────────────────────────── */
+.pills{display:flex;gap:6px;flex-wrap:wrap;}
+.pill{border:1px solid var(--line);border-radius:99px;padding:9px 14px;font-size:12px;color:var(--muted);cursor:pointer;background:none;min-height:40px;display:inline-flex;align-items:center;gap:6px;}
+.pill.on{background:var(--accent);border-color:var(--accent);color:#0B1226;font-weight:700;}
+
+/* ── TAGS ───────────────────────────────────────────── */
+.tag{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;padding:3px 8px;border-radius:5px;display:inline-block;white-space:nowrap;}
+.t-ok{background:rgba(255,107,61,.16);color:var(--accent);}
+.t-dec{background:rgba(242,166,90,.16);color:var(--amber);}
+.t-late{background:rgba(229,56,59,.16);color:var(--red);}
+.t-mut{background:rgba(141,151,186,.14);color:var(--muted);}
+
+/* ── AVATAR ─────────────────────────────────────────── */
+.av{width:34px;height:34px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;background:var(--surface2);color:var(--muted);border:1px solid var(--line);}
+.av.on{background:var(--accent);color:#0B1226;border-color:var(--accent);}
+.av.sm{width:26px;height:26px;font-size:10px;}
+
+/* ── LISTAS ─────────────────────────────────────────── */
+.li{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);}
+.li:last-child{border-bottom:none;}
+.li-main{flex:1;min-width:0;}
+.li-name{font-size:14px;font-weight:600;}
+.li-sub{font-size:11px;color:var(--faint);margin-top:2px;}
+
+/* ── INPUTS ─────────────────────────────────────────── */
+.field{margin-bottom:14px;}
+.field label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:700;display:block;margin-bottom:6px;}
+.inp{width:100%;background:#0B1226;border:1px solid var(--line);border-radius:9px;padding:13px;color:var(--text);font-size:15px;min-height:48px;}
+.inp:focus{border-color:var(--accent);}
+
+/* ── MODAL ──────────────────────────────────────────── */
+.ov{position:fixed;inset:0;background:rgba(5,8,18,.75);z-index:300;display:none;align-items:flex-end;backdrop-filter:blur(3px);}
+.ov.open{display:flex;}
+.modal{background:var(--surface);border-top:3px solid var(--accent);border-radius:18px 18px 0 0;width:100%;max-width:520px;margin:0 auto;padding:22px 18px calc(22px + env(safe-area-inset-bottom));max-height:92vh;overflow-y:auto;}
+.modal-t{font-family:'Archivo Black',sans-serif;font-size:26px;text-transform:uppercase;letter-spacing:-.02em;margin-bottom:5px;line-height:1;}
+.modal-s{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.5;}
+.modal-f{display:flex;gap:8px;margin-top:18px;}
+
+/* ── AVISOS ─────────────────────────────────────────── */
+.note{border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.5;margin-bottom:12px;}
+.note-o{background:rgba(255,107,61,.1);border:1px solid rgba(255,107,61,.32);color:var(--accent);}
+.note-r{background:rgba(229,56,59,.1);border:1px solid rgba(229,56,59,.32);color:#FF8A8C;}
+.note-m{background:var(--surface);border:1px solid var(--line);color:var(--muted);}
+.empty{font-size:13px;color:var(--faint);font-style:italic;padding:8px 0;}
+
+/* ── SYNC / LOADER ──────────────────────────────────── */
+#sync{position:fixed;top:0;left:50%;transform:translateX(-50%);background:var(--accent);color:#0B1226;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:7px 18px;border-radius:0 0 10px 10px;z-index:900;opacity:0;transition:.25s;pointer-events:none;}
+#sync.show{opacity:1;}
+#loader{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+.spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:99px;animation:sp .8s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg)}}
+.thumb{width:100%;border-radius:9px;margin-top:8px;display:block;border:1px solid var(--line);}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="spin"></div><div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--faint)">Conectando…</div></div>
+<div id="sync">Guardado</div>
+
+<!-- ══════════════════ LOGIN ══════════════════ -->
+<div id="gate" style="display:none">
+  <div class="head">
+    <div class="brand">
+      <span class="brand-top">Penya</span>
+      <span class="brand-main">FCB Fans</span>
+      <span class="brand-sub">Castelló</span>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="dsp" style="font-size:30px;margin-bottom:4px">¿Quién eres?</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px">Toca tu nombre para entrar.</div>
+    <div class="who" id="whoList"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ MENÚ ══════════════════ -->
+<div id="menu" style="display:none">
+  <div class="head">
+    <div class="brand">
+      <span class="brand-top">Temporada 26/27</span>
+      <span class="brand-main">FCB Fans</span>
+      <span class="brand-sub">Castelló</span>
+    </div>
+    <div class="menu-user">
+      <span class="av on" id="meAv"></span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:600" id="meName"></div>
+        <div style="font-size:10px;color:var(--faint);letter-spacing:1px;text-transform:uppercase" id="meRole"></div>
+      </div>
+      <button class="btn-g" onclick="logout()">Cambiar</button>
+    </div>
+  </div>
+  <div class="wrap" style="padding-top:8px">
+    <div id="menuList"></div>
+    <div style="margin-top:22px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--faint)" id="menuFoot"></div>
+  </div>
+</div>
+
+<!-- ══════════════════ SECCIONES ══════════════════ -->
+<div class="section" id="sec-mis">
+  <div class="sec-head"><button class="back" onclick="goMenu()">← Menú</button><div class="sec-title">Mis pagos</div></div>
+  <div class="wrap" id="body-mis"></div>
+</div>
+
+<div class="section" id="sec-penya">
+  <div class="sec-head"><button class="back" onclick="goMenu()">← Menú</button><div class="sec-title">La penya</div></div>
+  <div class="wrap" id="body-penya"></div>
+</div>
+
+<div class="section" id="sec-morosos">
+  <div class="sec-head"><button class="back" onclick="goMenu()">← Menú</button><div class="sec-title">Morosos</div></div>
+  <div class="wrap" id="body-morosos"></div>
+</div>
+
+<div class="section" id="sec-extras">
+  <div class="sec-head"><button class="back" onclick="goMenu()">← Menú</button><div class="sec-title">Extras</div></div>
+  <div class="wrap" id="body-extras"></div>
+</div>
+
+<div class="section" id="sec-socio">
+  <div class="sec-head"><button class="back" onclick="goSection('penya')">← La penya</button><div class="sec-title" id="socioTitle">Socio</div></div>
+  <div class="wrap" id="body-socio"></div>
+</div>
+
+<!-- ══════════════════ MODAL · MARCAR PAGO ══════════════════ -->
+<div class="ov" id="mPago" onclick="bgClose(event,'mPago')">
+  <div class="modal">
+    <div class="modal-t" id="pagoTitle">He pagado</div>
+    <div class="modal-s" id="pagoSub">Marca los meses que has pagado. David lo confirmará cuando lo vea en el banco.</div>
+
+    <span class="lbl" style="margin-top:0">Atajos</span>
+    <div class="row-btns" style="margin-bottom:14px">
+      <button class="btn-g" onclick="quickPick('todo')">Toda la temporada</button>
+      <button class="btn-g" onclick="quickPick('mitad')">Medio año</button>
+      <button class="btn-g" onclick="quickPick('vencidos')">Lo que debo</button>
+      <button class="btn-g" onclick="quickPick('nada')">Limpiar</button>
+    </div>
+
+    <span class="lbl">Meses</span>
+    <div class="meses" id="pagoMeses"></div>
+
+    <span class="lbl">Cómo lo has pagado</span>
+    <div class="pills" id="pagoMetodo"></div>
+
+    <span class="lbl">Justificante <span style="color:var(--faint);letter-spacing:0;text-transform:none;font-weight:400">· opcional</span></span>
+    <input type="file" id="pagoFoto" accept="image/*" style="display:none" onchange="onFoto(this)"/>
+    <button class="btn-g" style="width:100%" onclick="document.getElementById('pagoFoto').click()">📎 Adjuntar captura del Bizum o transferencia</button>
+    <div id="fotoPrev"></div>
+
+    <div class="card" style="margin-top:16px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12px;color:var(--muted)">Total marcado</span>
+      <span class="mid" id="pagoTotal">0 €</span>
+    </div>
+
+    <div class="modal-f">
+      <button class="btn-g" style="flex:1" onclick="closeM('mPago')">Cancelar</button>
+      <button class="btn" style="flex:2" id="pagoSave" onclick="savePago()">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODAL · EXTRA ══════════════════ -->
+<div class="ov" id="mExtra" onclick="bgClose(event,'mExtra')">
+  <div class="modal">
+    <div class="modal-t">Nuevo pago extra</div>
+    <div class="modal-s">Para cosas puntuales fuera de la cuota: Magdalena, autobús, cena…</div>
+    <div class="field"><label>Concepto</label><input class="inp" id="exTitulo" placeholder="Ej: Magdalena 2027"/></div>
+    <div class="field"><label>Importe por socio (€)</label><input class="inp" type="text" inputmode="decimal" id="exImporte" placeholder="Ej: 15"/></div>
+    <div class="field"><label>¿Quién lo paga?</label>
+      <div class="row-btns" style="margin-bottom:8px">
+        <button class="btn-g" onclick="exAll(true)">Todos</button>
+        <button class="btn-g" onclick="exAll(false)">Ninguno</button>
+      </div>
+      <div class="pills" id="exSocios"></div>
+    </div>
+    <div class="modal-f">
+      <button class="btn-g" style="flex:1" onclick="closeM('mExtra')">Cancelar</button>
+      <button class="btn" style="flex:2" onclick="saveExtra()">Crear</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODAL · DEUDA ══════════════════ -->
+<div class="ov" id="mDeuda" onclick="bgClose(event,'mDeuda')">
+  <div class="modal">
+    <div class="modal-t">Deuda anterior</div>
+    <div class="modal-s">Lo que arrastra un socio de la temporada 25/26.</div>
+    <div class="field"><label>Socio</label><div class="pills" id="deSocios"></div></div>
+    <div class="field"><label>Importe (€)</label><input class="inp" type="text" inputmode="decimal" id="deImporte" placeholder="Ej: 265"/></div>
+    <div class="field"><label>Concepto</label><input class="inp" id="deConcepto" placeholder="Ej: Temporada completa + lotería"/></div>
+    <div class="modal-f">
+      <button class="btn-g" style="flex:1" onclick="closeM('mDeuda')">Cancelar</button>
+      <button class="btn" style="flex:2" onclick="saveDeuda()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODAL · AVISO WHATSAPP ══════════════════ -->
+<div class="ov" id="mAviso" onclick="bgClose(event,'mAviso')">
+  <div class="modal">
+    <div class="modal-t">Aviso para el grupo</div>
+    <div class="modal-s">Cópialo y pégalo en el WhatsApp de la penya.</div>
+    <textarea class="inp" id="avisoTxt" style="height:300px;font-size:13px;line-height:1.5;resize:none"></textarea>
+    <div class="modal-f">
+      <button class="btn-g" style="flex:1" onclick="closeM('mAviso')">Cerrar</button>
+      <button class="btn" style="flex:2" onclick="copiarAviso()">Copiar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, doc, onSnapshot, setDoc, deleteDoc, getDocs }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDqLcjDkbXpOiVkRPphQovpOCFs50v4NKw",
+  authDomain: "fcbfans-bfba9.firebaseapp.com",
+  projectId: "fcbfans-bfba9",
+  storageBucket: "fcbfans-bfba9.firebasestorage.app",
+  messagingSenderId: "809903186369",
+  appId: "1:809903186369:web:1cc2b63adb2cee2a8b0f40"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+window.DB = { db, collection, doc, onSnapshot, setDoc, deleteDoc, getDocs };
+window.dispatchEvent(new Event('fb-ready'));
+</script>
+
+<script>
+window.addEventListener('fb-ready', () => window.__start());
+</script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   PENYA FCB FANS CASTELLÓ · App de pagos
+   Sube APP_VERSION en cada despliegue.
+   ═══════════════════════════════════════════════════════════════ */
+
+const APP_VERSION = 1;
+const ADMIN = "David";                 // único que confirma
+const CUOTA = 20;                      // € al mes
+const LOTERIA = 25;                    // € si no vende lotería
+const IBAN = "ES03 0182 1294 1802 0450 9099";
+const TEMPORADA = "26/27";
+
+/* ── SOCIOS ── cambia aquí los nombres y ya está ─────────────── */
+const SOCIOS = [
+  "David","Campos","Carlitos","Gómez","Guillem","Ignacio","Joseva",
+  "Lee","Manel","Marta","Murta","Pablo","Pepo","Ros","Rulo",
+  "Samjesús","Wator"
+];
+
+/* ── MESES: septiembre 2026 → agosto 2027 ────────────────────── */
+const MESES = [
+  {k:"sep",l:"Sep",n:"Septiembre",y:2026,m:8},
+  {k:"oct",l:"Oct",n:"Octubre",   y:2026,m:9},
+  {k:"nov",l:"Nov",n:"Noviembre", y:2026,m:10},
+  {k:"dic",l:"Dic",n:"Diciembre", y:2026,m:11},
+  {k:"ene",l:"Ene",n:"Enero",     y:2027,m:0},
+  {k:"feb",l:"Feb",n:"Febrero",   y:2027,m:1},
+  {k:"mar",l:"Mar",n:"Marzo",     y:2027,m:2},
+  {k:"abr",l:"Abr",n:"Abril",     y:2027,m:3},
+  {k:"may",l:"May",n:"Mayo",      y:2027,m:4},
+  {k:"jun",l:"Jun",n:"Junio",     y:2027,m:5},
+  {k:"jul",l:"Jul",n:"Julio",     y:2027,m:6},
+  {k:"ago",l:"Ago",n:"Agosto",    y:2027,m:7},
+];
+const TOTAL_TEMP = MESES.length * CUOTA;   // 240 €
+
+const METODOS = {
+  transferencia:{l:"Transferencia"},
+  campos:{l:"En mano a Campos"},
+  david:{l:"En mano a David"},
+};
+
+/* ═══════════════ ESTADO ═══════════════ */
+let ME = null;
+let pagos = [], extras = [], loteria = [], deudas = [];
+let DB_ = null;
+let currentSection = null;
+let ready = {pagos:false, extras:false, loteria:false, deudas:false};
+const COLS = ["pagos","extras","loteria","deudas"];
+
+/* ═══════════════ HELPERS ═══════════════ */
+const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const eur = n => (Math.round((Number(n)||0)*100)/100).toLocaleString("es-ES",{minimumFractionDigits:0,maximumFractionDigits:2}) + " €";
+const ini = n => n ? n.trim()[0].toUpperCase() : "?";
+const slug = n => String(n).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]/g,"");
+const clone = o => JSON.parse(JSON.stringify(o));
+const nowISO = () => new Date().toISOString();
+const todayISO = () => new Date().toISOString().slice(0,10);
+const isAdmin = () => ME === ADMIN;
+const av = (n,cls="") => `<span class="av ${cls}">${esc(ini(n))}</span>`;
+const tag = (t,c) => `<span class="tag ${c}">${esc(t)}</span>`;
+
+/* Meses vencidos: un mes se considera impagado a partir del día 1 del mes siguiente. */
+function idxActual(){
+  const d = new Date();
+  const i = (d.getFullYear()-2026)*12 + (d.getMonth()-8);
+  return Math.max(0, Math.min(MESES.length, i));
+}
+const mesVencido = i => i < idxActual();
+
+/* ═══════════════ FIRESTORE ═══════════════ */
+function sync(t="Guardado"){
+  const b = document.getElementById('sync');
+  b.textContent = t; b.classList.add('show');
+  clearTimeout(window.__st);
+  window.__st = setTimeout(()=>b.classList.remove('show'), 1500);
+}
+async function fbSet(col, item){
+  try{ await DB_.setDoc(DB_.doc(DB_.db, col, String(item.id)), item); sync(); }
+  catch(e){ console.error(col,e); sync("Error de red"); }
+}
+async function fbDel(col, id){
+  try{ await DB_.deleteDoc(DB_.doc(DB_.db, col, String(id))); sync(); }
+  catch(e){ console.error(col,e); sync("Error de red"); }
+}
+function setLocal(col, arr){
+  if(col==="pagos") pagos = arr;
+  if(col==="extras") extras = arr;
+  if(col==="loteria") loteria = arr;
+  if(col==="deudas") deudas = arr;
+}
+function subscribe(){
+  COLS.forEach(col=>{
+    DB_.onSnapshot(DB_.collection(DB_.db,col), snap=>{
+      const arr=[]; snap.forEach(d=>arr.push(d.data()));
+      setLocal(col,arr); ready[col]=true; onData();
+    }, err=>{
+      console.error("snapshot",col,err); sync("Error de conexión");
+      if(!ready[col]){ ready[col]=true; onData(); }
+    });
+  });
+}
+const allReady = () => COLS.every(c=>ready[c]);
+function onData(){
+  if(!allReady()) return;
+  document.getElementById('loader').style.display='none';
+  if(ME){ if(currentSection) render(currentSection); renderMenu(); }
+}
+function watchVersion(){
+  DB_.onSnapshot(DB_.doc(DB_.db,"meta","app"), snap=>{
+    const d = snap.exists() ? snap.data() : null;
+    if(d && typeof d.minVersion==="number" && d.minVersion > APP_VERSION) location.reload(true);
+  }, ()=>{});
+}
+
+/* ═══════════════ ARRANQUE ═══════════════ */
+window.__start = function(){
+  DB_ = window.DB;
+  watchVersion();
+  subscribe();
+  setTimeout(()=>{ document.getElementById('loader').style.display='none'; if(!ME) renderGate(); }, 6000);
+  const t = setInterval(()=>{
+    if(!allReady()) return;
+    clearInterval(t);
+    const saved = localStorage.getItem('fcb_me');
+    if(saved && SOCIOS.includes(saved)){ ME = saved; enterApp(); } else renderGate();
+  },120);
+};
+
+/* ═══════════════ LOGIN ═══════════════ */
+function renderGate(){
+  document.getElementById('loader').style.display='none';
+  document.getElementById('gate').style.display='flex';
+  document.getElementById('menu').style.display='none';
+  document.getElementById('whoList').innerHTML = SOCIOS.map(n=>
+    `<button class="who-btn" onclick="pickMe('${esc(n)}')">${av(n, n===ADMIN?'sm on':'sm')}<span class="who-name">${esc(n)}</span></button>`
+  ).join('');
+}
+function pickMe(n){ ME=n; localStorage.setItem('fcb_me',n); enterApp(); }
+function enterApp(){
+  document.getElementById('gate').style.display='none';
+  document.getElementById('meAv').textContent = ini(ME);
+  document.getElementById('meName').textContent = ME;
+  document.getElementById('meRole').textContent = isAdmin() ? "Tesorero" : "Socio";
+  goMenu();
+}
+function logout(){
+  ME=null; localStorage.removeItem('fcb_me');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('menu').style.display='none';
+  renderGate();
+}
+
+/* ═══════════════ CÁLCULO ═══════════════ */
+const pagoId = (name,mes) => `${slug(name)}_${mes}`;
+const getPago = (name,mes) => pagos.find(p=>p.id===pagoId(name,mes)) || null;
+
+function estadoMes(name, i){
+  const p = getPago(name, MESES[i].k);
+  if(p && p.estado==="confirmado") return "ok";
+  if(p && p.estado==="declarado")  return "dec";
+  return mesVencido(i) ? "late" : "next";
+}
+function resumen(name){
+  let ok=0, dec=0, late=0;
+  MESES.forEach((m,i)=>{ const e=estadoMes(name,i); if(e==="ok")ok++; else if(e==="dec")dec++; else if(e==="late")late++; });
+  const deuda = deudas.filter(d=>d.name===name && !d.saldado).reduce((s,d)=>s+(Number(d.importe)||0),0);
+  const lot = loteria.find(l=>l.id===slug(name)) || null;
+  const lotDeuda = (lot && lot.modo==="paga" && lot.estado!=="confirmado") ? LOTERIA : 0;
+  const ex = extrasPendientes(name);
+  return {
+    ok, dec, late,
+    pagado: ok*CUOTA,
+    porConfirmar: dec*CUOTA,
+    debeMeses: late*CUOTA,
+    deudaVieja: deuda,
+    lotDeuda,
+    extraDeuda: ex.total,
+    extraList: ex.list,
+    debeTotal: late*CUOTA + deuda + lotDeuda + ex.total,
+    pct: Math.round((ok/MESES.length)*100),
+  };
+}
+function extrasPendientes(name){
+  let total=0; const list=[];
+  extras.forEach(e=>{
+    if(!Array.isArray(e.socios) || !e.socios.includes(name)) return;
+    const st = (e.pagos||{})[name];
+    if(st!=="confirmado"){ if(st!=="declarado") total += Number(e.importe)||0; list.push({e, st: st||"pendiente"}); }
+  });
+  return {total, list};
+}
+function recaudado(){
+  const cuotas = pagos.filter(p=>p.estado==="confirmado").length * CUOTA;
+  const lot = loteria.filter(l=>l.modo==="paga" && l.estado==="confirmado").length * LOTERIA;
+  let ex=0; extras.forEach(e=>{ Object.values(e.pagos||{}).forEach(v=>{ if(v==="confirmado") ex += Number(e.importe)||0; }); });
+  return {cuotas, lot, ex, total: cuotas+lot+ex};
+}
+const porConfirmarCount = () =>
+  pagos.filter(p=>p.estado==="declarado").length
+  + loteria.filter(l=>l.estado==="declarado").length
+  + extras.reduce((s,e)=>s+Object.values(e.pagos||{}).filter(v=>v==="declarado").length,0);
+
+/* ═══════════════ NAVEGACIÓN ═══════════════ */
+function goMenu(){
+  currentSection=null;
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('menu').style.display='block';
+  window.scrollTo(0,0);
+  renderMenu();
+}
+function goSection(k){
+  currentSection=k;
+  document.getElementById('menu').style.display='none';
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  const s=document.getElementById('sec-'+k); if(s) s.classList.add('active');
+  window.scrollTo(0,0);
+  render(k);
+}
+function render(k){
+  if(k==='mis') renderMis();
+  if(k==='penya') renderPenya();
+  if(k==='morosos') renderMorosos();
+  if(k==='extras') renderExtras();
+  if(k==='socio') renderSocio();
+}
+
+const MENU = [
+  {k:"mis",     l:"Mis pagos"},
+  {k:"penya",   l:"La penya"},
+  {k:"morosos", l:"Morosos"},
+  {k:"extras",  l:"Extras"},
+];
+function renderMenu(){
+  const r = resumen(ME);
+  document.getElementById('menuList').innerHTML = MENU.map((it,i)=>{
+    let b='';
+    if(it.k==='mis'){
+      if(r.debeTotal>0) b = `<span class="badge red">${eur(r.debeTotal)}</span>`;
+      else b = `<span class="badge">✓</span>`;
+    }
+    if(it.k==='morosos'){
+      const n = SOCIOS.filter(s=>resumen(s).debeTotal>0).length;
+      if(n) b = `<span class="badge red">${n}</span>`;
+    }
+    if(it.k==='penya' && isAdmin()){
+      const n = porConfirmarCount();
+      if(n) b = `<span class="badge">${n}</span>`;
+    }
+    return `<div class="menu-row" onclick="goSection('${it.k}')">
+      <span class="menu-num">${String(i+1).padStart(2,'0')}</span>
+      <span class="menu-label">${it.l}</span>${b}
+      <span class="menu-arrow">›</span>
+    </div>`;
+  }).join('');
+  const rec = recaudado();
+  document.getElementById('menuFoot').textContent =
+    `${SOCIOS.length} socios · ${CUOTA} €/mes · recaudado ${eur(rec.total)}`;
+}
+
+/* ═══════════════ MIS PAGOS ═══════════════ */
+function renderMis(){
+  const r = resumen(ME);
+  let h = `<div class="hero">
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--faint);font-weight:700">Temporada ${TEMPORADA}</div>
+    <div class="big" style="color:var(--accent);margin-top:8px">${eur(r.pagado)}</div>
+    <div class="sub">de ${eur(TOTAL_TEMP)} · ${r.ok} de ${MESES.length} meses confirmados</div>
+    <div class="bar"><div class="bar-fill" style="width:${r.pct}%"></div></div>
+  </div>`;
+
+  if(r.porConfirmar>0)
+    h += `<div class="note note-o">Tienes ${eur(r.porConfirmar)} marcados esperando que David los confirme.</div>`;
+
+  if(r.debeTotal>0){
+    h += `<div class="note note-r"><b>Debes ${eur(r.debeTotal)}</b><br>`;
+    const partes=[];
+    if(r.debeMeses>0)  partes.push(`${eur(r.debeMeses)} de cuotas vencidas`);
+    if(r.deudaVieja>0) partes.push(`${eur(r.deudaVieja)} de la temporada 25/26`);
+    if(r.lotDeuda>0)   partes.push(`${eur(r.lotDeuda)} de la lotería`);
+    if(r.extraDeuda>0) partes.push(`${eur(r.extraDeuda)} de pagos extra`);
+    h += partes.join(' · ') + `</div>`;
+  } else if(r.porConfirmar===0){
+    h += `<div class="note note-o">Estás al día. Gràcies! 💙❤️</div>`;
+  }
+
+  h += `<button class="btn" onclick="openPago('${esc(ME)}')">He pagado</button>`;
+
+  h += `<span class="lbl">Los 12 meses</span>${mesesGrid(ME)}`;
+  h += leyenda();
+
+  h += `<span class="lbl">Cuenta de la penya</span>
+  <div class="card">
+    <div style="font-size:16px;font-weight:600;letter-spacing:.04em">${IBAN}</div>
+    <div class="sub">Pon en el concepto: <b style="color:var(--text)">tu nombre + el mes</b></div>
+    <button class="btn-g" style="width:100%;margin-top:12px" onclick="copiar('${IBAN.replace(/ /g,'')}','IBAN copiado')">Copiar IBAN</button>
+  </div>`;
+
+  const mios = pagos.filter(p=>p.name===ME).sort((a,b)=>(b.declaradoAt||'').localeCompare(a.declaradoAt||''));
+  h += `<span class="lbl">Mi historial</span>`;
+  if(!mios.length) h += `<div class="empty">Todavía no has marcado ningún pago.</div>`;
+  else h += `<div class="card">` + mios.map(p=>{
+    const m = MESES.find(x=>x.k===p.mes);
+    return `<div class="li">
+      <div class="li-main">
+        <div class="li-name">${esc(m?m.n:p.mes)}</div>
+        <div class="li-sub">${esc((METODOS[p.metodo]||{l:'—'}).l)}${p.declaradoAt?' · '+p.declaradoAt.slice(8,10)+'/'+p.declaradoAt.slice(5,7):''}</div>
+      </div>
+      ${p.foto?`<button class="btn-xs ghost" onclick="verFoto('${p.id}')">Ver</button>`:''}
+      ${p.estado==='confirmado'?tag('Confirmado','t-ok'):tag('Por confirmar','t-dec')}
+    </div>`;
+  }).join('') + `</div>`;
+
+  document.getElementById('body-mis').innerHTML = h;
+}
+
+function mesesGrid(name){
+  return `<div class="meses">` + MESES.map((m,i)=>{
+    const e = estadoMes(name,i);
+    const sub = e==='ok'?'Pagado':e==='dec'?'Enviado':e==='late'?'Debe':'—';
+    return `<div class="mes ${e}"><div class="mes-k">${m.l}</div><div class="mes-s">${sub}</div></div>`;
+  }).join('') + `</div>`;
+}
+function leyenda(){
+  return `<div class="card" style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+    ${tag('Pagado · confirmado','t-ok')}${tag('Enviado · falta confirmar','t-dec')}${tag('Debe','t-late')}${tag('Aún no toca','t-mut')}
+  </div>`;
+}
+
+/* ═══════════════ MODAL PAGO ═══════════════ */
+let pagoTarget = null, pagoSel = {}, pagoMetodo = "transferencia", pagoFotoData = null;
+
+function openPago(name){
+  pagoTarget = name;
+  pagoSel = {}; pagoMetodo = "transferencia"; pagoFotoData = null;
+  document.getElementById('fotoPrev').innerHTML = '';
+  document.getElementById('pagoTitle').textContent = (name===ME) ? "He pagado" : "Pago de " + name;
+  document.getElementById('pagoSub').textContent = isAdmin()
+    ? "Lo que marques queda confirmado directamente."
+    : "Marca los meses que has pagado. David lo confirmará cuando lo vea.";
+  document.getElementById('pagoSave').textContent = isAdmin() ? "Confirmar" : "Enviar";
+  renderPagoMeses(); renderPagoMetodo(); pagoTotal();
+  openM('mPago');
+}
+function renderPagoMeses(){
+  document.getElementById('pagoMeses').innerHTML = MESES.map((m,i)=>{
+    const e = estadoMes(pagoTarget,i);
+    if(e==='ok') return `<div class="mes ok"><div class="mes-k">${m.l}</div><div class="mes-s">Pagado</div></div>`;
+    const on = pagoSel[m.k];
+    const base = on ? 'sel' : (e==='late'?'late':e==='dec'?'dec':'next');
+    const sub = on ? 'Marcado' : (e==='dec'?'Enviado':e==='late'?'Debe':'—');
+    return `<div class="mes pick ${base}" onclick="togMes('${m.k}')"><div class="mes-k">${m.l}</div><div class="mes-s">${sub}</div></div>`;
+  }).join('');
+}
+function togMes(k){ pagoSel[k] = !pagoSel[k]; renderPagoMeses(); pagoTotal(); }
+function quickPick(mode){
+  pagoSel = {};
+  MESES.forEach((m,i)=>{
+    if(estadoMes(pagoTarget,i)==='ok') return;
+    if(mode==='todo') pagoSel[m.k]=true;
+    if(mode==='mitad' && i<6) pagoSel[m.k]=true;
+    if(mode==='vencidos' && estadoMes(pagoTarget,i)==='late') pagoSel[m.k]=true;
+  });
+  renderPagoMeses(); pagoTotal();
+}
+function renderPagoMetodo(){
+  document.getElementById('pagoMetodo').innerHTML = Object.entries(METODOS).map(([k,v])=>
+    `<button class="pill ${k===pagoMetodo?'on':''}" onclick="setMetodo('${k}')">${v.l}</button>`
+  ).join('');
+}
+function setMetodo(k){ pagoMetodo=k; renderPagoMetodo(); }
+function pagoTotal(){
+  const n = Object.values(pagoSel).filter(Boolean).length;
+  document.getElementById('pagoTotal').textContent = eur(n*CUOTA);
+  document.getElementById('pagoSave').disabled = n===0;
+}
+function onFoto(input){
+  const f = input.files && input.files[0]; if(!f) return;
+  const fr = new FileReader();
+  fr.onload = ev=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const max=900; let w=img.width, h=img.height;
+      if(w>h && w>max){ h=Math.round(h*max/w); w=max; } else if(h>max){ w=Math.round(w*max/h); h=max; }
+      const c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      pagoFotoData = c.toDataURL('image/jpeg',0.55);
+      document.getElementById('fotoPrev').innerHTML =
+        `<img class="thumb" src="${pagoFotoData}"/><button class="btn-g" style="width:100%;margin-top:6px" onclick="quitarFoto()">Quitar justificante</button>`;
+    };
+    img.src = ev.target.result;
+  };
+  fr.readAsDataURL(f);
+}
+function quitarFoto(){ pagoFotoData=null; document.getElementById('fotoPrev').innerHTML=''; document.getElementById('pagoFoto').value=''; }
+function savePago(){
+  const keys = Object.keys(pagoSel).filter(k=>pagoSel[k]);
+  if(!keys.length) return;
+  const estado = isAdmin() ? "confirmado" : "declarado";
+  keys.forEach(k=>{
+    fbSet('pagos', {
+      id: pagoId(pagoTarget,k), name: pagoTarget, mes: k, importe: CUOTA,
+      metodo: pagoMetodo, estado,
+      declaradoAt: nowISO(), declaradoPor: ME,
+      confirmadoAt: estado==="confirmado" ? nowISO() : null,
+      foto: pagoFotoData || null,
+    });
+  });
+  closeM('mPago');
+  setTimeout(()=>{
+    if(estado==="declarado") alert(`Marcados ${keys.length} mes${keys.length>1?'es':''} · ${eur(keys.length*CUOTA)}.\n\nDavid lo confirmará cuando lo compruebe.`);
+  }, 250);
+}
+function verFoto(id){
+  const p = pagos.find(x=>x.id===id);
+  if(!p || !p.foto) return;
+  const w = window.open();
+  if(w) w.document.write(`<body style="margin:0;background:#0B1226;display:flex;align-items:center;justify-content:center;height:100vh"><img src="${p.foto}" style="max-width:100%;max-height:100%"></body>`);
+}
+
+/* ═══════════════ LA PENYA ═══════════════ */
+function renderPenya(){
+  const rec = recaudado();
+  const objetivo = SOCIOS.length * TOTAL_TEMP;
+  const pct = Math.round(rec.total/objetivo*100);
+
+  let h = `<div class="hero">
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--faint);font-weight:700">Recaudado</div>
+    <div class="big" style="color:var(--accent);margin-top:8px">${eur(rec.total)}</div>
+    <div class="sub">Objetivo temporada: ${eur(objetivo)} · ${SOCIOS.length} socios × ${eur(TOTAL_TEMP)}</div>
+    <div class="bar"><div class="bar-fill" style="width:${Math.min(100,pct)}%"></div></div>
+    <div class="sub" style="margin-top:8px">Cuotas ${eur(rec.cuotas)} · Lotería ${eur(rec.lot)} · Extras ${eur(rec.ex)}</div>
+  </div>`;
+
+  if(isAdmin()){
+    const pend = pagos.filter(p=>p.estado==="declarado").sort((a,b)=>(a.declaradoAt||'').localeCompare(b.declaradoAt||''));
+    h += `<span class="lbl">Por confirmar (${pend.length})</span>`;
+    if(!pend.length) h += `<div class="empty">Nada pendiente de confirmar.</div>`;
+    pend.forEach(p=>{
+      const m = MESES.find(x=>x.k===p.mes);
+      h += `<div class="card" style="border-color:var(--amber)">
+        <div class="li" style="border:none;padding:0">
+          ${av(p.name)}
+          <div class="li-main">
+            <div class="li-name">${esc(p.name)} · ${esc(m?m.n:p.mes)}</div>
+            <div class="li-sub">${eur(p.importe)} · ${esc((METODOS[p.metodo]||{l:'—'}).l)}</div>
+          </div>
+        </div>
+        <div class="row-btns" style="margin-top:12px">
+          <button class="btn-xs" style="flex:1" onclick="confirmarPago('${p.id}')">✓ Confirmar</button>
+          ${p.foto?`<button class="btn-xs ghost" onclick="verFoto('${p.id}')">Ver justificante</button>`:''}
+          <button class="btn-xs danger" onclick="rechazarPago('${p.id}')">Rechazar</button>
+        </div>
+      </div>`;
+    });
+  }
+
+  h += `<span class="lbl">Estado de los socios</span>`;
+  const list = SOCIOS.map(n=>({n, r:resumen(n)}))
+    .sort((a,b)=> b.r.debeTotal - a.r.debeTotal || b.r.pagado - a.r.pagado || a.n.localeCompare(b.n,'es'));
+  h += `<div class="card">` + list.map(({n,r})=>{
+    const st = r.debeTotal>0 ? tag('Debe '+eur(r.debeTotal),'t-late')
+             : r.porConfirmar>0 ? tag('Por confirmar','t-dec')
+             : tag('Al día','t-ok');
+    return `<div class="li" style="cursor:pointer" onclick="openSocio('${esc(n)}')">
+      ${av(n, n===ME?'on':'')}
+      <div class="li-main">
+        <div class="li-name">${esc(n)}${n===ME?' <span style="color:var(--faint);font-size:10px">(tú)</span>':''}</div>
+        <div class="bar-sm" style="margin-top:6px"><div class="bar-fill" style="width:${r.pct}%"></div></div>
+        <div class="li-sub">${eur(r.pagado)} de ${eur(TOTAL_TEMP)}</div>
+      </div>
+      ${st}
+      <span style="color:var(--faint)">›</span>
+    </div>`;
+  }).join('') + `</div>`;
+
+  document.getElementById('body-penya').innerHTML = h;
+}
+function confirmarPago(id){
+  if(!isAdmin()) return;
+  const p = pagos.find(x=>x.id===id); if(!p) return;
+  const n = clone(p); n.estado="confirmado"; n.confirmadoAt=nowISO(); fbSet('pagos', n);
+}
+function rechazarPago(id){
+  if(!isAdmin()) return;
+  const p = pagos.find(x=>x.id===id); if(!p) return;
+  if(!confirm(`¿Rechazar el pago de ${p.name}?\n\nVolverá a aparecer como no pagado.`)) return;
+  fbDel('pagos', id);
+}
+
+/* ═══════════════ FICHA DE SOCIO ═══════════════ */
+let socioActivo = null;
+function openSocio(n){ socioActivo = n; goSection('socio'); }
+function renderSocio(){
+  const n = socioActivo; if(!n){ goSection('penya'); return; }
+  const r = resumen(n);
+  document.getElementById('socioTitle').textContent = n;
+
+  let h = `<div class="hero">
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--faint);font-weight:700">Temporada ${TEMPORADA}</div>
+    <div class="big" style="color:${r.debeTotal>0?'var(--red)':'var(--accent)'};margin-top:8px">${r.debeTotal>0?eur(r.debeTotal):eur(r.pagado)}</div>
+    <div class="sub">${r.debeTotal>0?`Debe · ha pagado ${eur(r.pagado)} de ${eur(TOTAL_TEMP)}`:`Pagado de ${eur(TOTAL_TEMP)}`}</div>
+    <div class="bar"><div class="bar-fill" style="width:${r.pct}%"></div></div>
+  </div>`;
+
+  if(r.deudaVieja>0){
+    h += `<span class="lbl">Temporada 25/26</span>`;
+    deudas.filter(d=>d.name===n && !d.saldado).forEach(d=>{
+      h += `<div class="card" style="border-color:rgba(229,56,59,.4)">
+        <div class="li" style="border:none;padding:0">
+          <div class="li-main"><div class="li-name">${eur(d.importe)}</div><div class="li-sub">${esc(d.concepto||'Temporada anterior')}</div></div>
+          ${isAdmin()?`<button class="btn-xs" onclick="saldarDeuda('${d.id}')">Saldada</button>`:tag('Pendiente','t-late')}
+        </div>
+      </div>`;
+    });
+  }
+
+  h += `<span class="lbl">Los 12 meses</span>${mesesGrid(n)}`;
+
+  if(isAdmin()){
+    h += `<button class="btn" style="margin-top:14px" onclick="openPago('${esc(n)}')">Registrar pago de ${esc(n)}</button>`;
+    const suyos = pagos.filter(p=>p.name===n).sort((a,b)=>MESES.findIndex(m=>m.k===a.mes)-MESES.findIndex(m=>m.k===b.mes));
+    if(suyos.length){
+      h += `<span class="lbl">Movimientos</span><div class="card">` + suyos.map(p=>{
+        const m = MESES.find(x=>x.k===p.mes);
+        return `<div class="li">
+          <div class="li-main"><div class="li-name">${esc(m?m.n:p.mes)}</div>
+          <div class="li-sub">${esc((METODOS[p.metodo]||{l:'—'}).l)}</div></div>
+          ${p.estado==='confirmado'?tag('Confirmado','t-ok'):tag('Por confirmar','t-dec')}
+          <button class="btn-xs danger" onclick="rechazarPago('${p.id}')">×</button>
+        </div>`;
+      }).join('') + `</div>`;
+    }
+  }
+  document.getElementById('body-socio').innerHTML = h;
+}
+function saldarDeuda(id){
+  if(!isAdmin()) return;
+  const d = deudas.find(x=>x.id===id); if(!d) return;
+  if(!confirm(`¿Marcar como saldada la deuda de ${d.name} (${eur(d.importe)})?`)) return;
+  const n = clone(d); n.saldado=true; n.saldadoAt=nowISO(); fbSet('deudas', n);
+}
+
+/* ═══════════════ MOROSOS ═══════════════ */
+function renderMorosos(){
+  const list = SOCIOS.map(n=>({n, r:resumen(n)})).filter(x=>x.r.debeTotal>0)
+    .sort((a,b)=>b.r.debeTotal-a.r.debeTotal);
+  const alDia = SOCIOS.filter(n=>{ const r=resumen(n); return r.debeTotal===0 && r.porConfirmar===0; });
+  const totalDebido = list.reduce((s,x)=>s+x.r.debeTotal,0);
+
+  let h = `<div class="hero" style="border-color:${list.length?'rgba(229,56,59,.45)':'var(--line)'}">
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--faint);font-weight:700">Dinero en la calle</div>
+    <div class="big" style="color:${list.length?'var(--red)':'var(--accent)'};margin-top:8px">${eur(totalDebido)}</div>
+    <div class="sub">${list.length?`${list.length} de ${SOCIOS.length} socios deben algo`:'Nadie debe nada. Milagro.'}</div>
+  </div>`;
+
+  h += `<button class="btn" onclick="abrirAviso()">Generar aviso para WhatsApp</button>`;
+
+  h += `<span class="lbl">Ranking</span>`;
+  if(!list.length) h += `<div class="empty">La penya está al día.</div>`;
+  h += list.map((x,i)=>{
+    const partes=[];
+    if(x.r.debeMeses>0)  partes.push(`${x.r.late} mes${x.r.late>1?'es':''} de cuota`);
+    if(x.r.deudaVieja>0) partes.push(`${eur(x.r.deudaVieja)} de 25/26`);
+    if(x.r.lotDeuda>0)   partes.push(`lotería`);
+    if(x.r.extraDeuda>0) partes.push(`extras`);
+    return `<div class="card" style="border-color:${i===0?'var(--red)':'var(--line)'};cursor:pointer" onclick="openSocio('${esc(x.n)}')">
+      <div class="li" style="border:none;padding:0">
+        <div class="dsp" style="font-size:22px;color:${i===0?'var(--red)':'var(--faint)'};min-width:34px">${i+1}</div>
+        ${av(x.n)}
+        <div class="li-main">
+          <div class="li-name">${esc(x.n)}</div>
+          <div class="li-sub">${partes.join(' · ')}</div>
+        </div>
+        <div class="mid" style="color:var(--red)">${eur(x.r.debeTotal)}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  h += `<span class="lbl">Al día (${alDia.length})</span>`;
+  h += alDia.length
+    ? `<div class="card" style="display:flex;flex-wrap:wrap;gap:6px">${alDia.map(n=>`<span class="pill on" style="pointer-events:none">${esc(n)}</span>`).join('')}</div>`
+    : `<div class="empty">Ninguno todavía.</div>`;
+
+  document.getElementById('body-morosos').innerHTML = h;
+}
+
+function textoAviso(){
+  const list = SOCIOS.map(n=>({n, r:resumen(n)})).filter(x=>x.r.debeTotal>0).sort((a,b)=>b.r.debeTotal-a.r.debeTotal);
+  const alDia = SOCIOS.filter(n=>{ const r=resumen(n); return r.debeTotal===0 && r.porConfirmar===0; });
+  const i = idxActual();
+  const mesRef = i>0 ? MESES[i-1].n : MESES[0].n;
+
+  let t = `⚽ PENYA FCB FANS CASTELLÓ · Temporada ${TEMPORADA}\n`;
+  t += `Cuota: ${CUOTA} € al mes · ${TOTAL_TEMP} € la temporada\n`;
+  t += `Cerrado hasta ${mesRef.toLowerCase()}.\n\n`;
+
+  if(list.length){
+    t += `🔴 PENDIENTE DE PAGO (${list.length}):\n`;
+    list.forEach(x=>{
+      const d=[];
+      if(x.r.debeMeses>0)  d.push(`${x.r.late} mes${x.r.late>1?'es':''}`);
+      if(x.r.deudaVieja>0) d.push(`${x.r.deudaVieja} € de 25/26`);
+      if(x.r.lotDeuda>0)   d.push(`lotería`);
+      if(x.r.extraDeuda>0) d.push(`extras`);
+      t += `· ${x.n} — ${Math.round(x.r.debeTotal)} €  (${d.join(', ')})\n`;
+    });
+    t += `\nTotal pendiente: ${Math.round(list.reduce((s,x)=>s+x.r.debeTotal,0))} €\n\n`;
+  } else {
+    t += `✅ Todo el mundo al día. Gràcies!\n\n`;
+  }
+
+  if(alDia.length) t += `✅ Al día: ${alDia.join(', ')}\n\n`;
+
+  t += `Nº de cuenta:\n${IBAN}\n`;
+  t += `Concepto: NOMBRE + MES\n\n`;
+  t += `Cada uno como le vaya mejor: mensual, medio año o toda la temporada. Pero pagar, se ha de pagar.`;
+  return t;
+}
+function abrirAviso(){
+  document.getElementById('avisoTxt').value = textoAviso();
+  openM('mAviso');
+}
+function copiarAviso(){
+  const t = document.getElementById('avisoTxt').value;
+  if(navigator.share){ navigator.share({text:t}).catch(()=>copiar(t,'Aviso copiado')); }
+  else copiar(t,'Aviso copiado');
+}
+function copiar(txt,msg){
+  const done = ()=>{ sync(msg||'Copiado'); };
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(txt).then(done).catch(fallback); }
+  else fallback();
+  function fallback(){
+    const ta=document.createElement('textarea'); ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); done(); }catch(e){ alert("Copia el texto a mano."); }
+    document.body.removeChild(ta);
+  }
+}
+
+/* ═══════════════ EXTRAS ═══════════════ */
+function renderExtras(){
+  let h = '';
+
+  /* ── LOTERÍA ── */
+  h += `<span class="lbl">Lotería de Navidad</span>`;
+  h += `<div class="note note-m">Cada socio, o <b style="color:var(--text)">vende</b> su lotería, o <b style="color:var(--text)">paga ${LOTERIA} €</b>. También paga quien prefiere no cogerla.</div>`;
+
+  const miLot = loteria.find(l=>l.id===slug(ME)) || null;
+  h += `<div class="card">
+    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:10px">Lo mío</div>
+    <div class="pills">
+      <button class="pill ${miLot&&miLot.modo==='vende'?'on':''}" onclick="setLot('${esc(ME)}','vende')">La vendo</button>
+      <button class="pill ${miLot&&miLot.modo==='paga'?'on':''}" onclick="setLot('${esc(ME)}','paga')">Pago los ${LOTERIA} €</button>
+    </div>
+    ${miLot?`<div class="sub">${miLot.modo==='vende'?'Marcado como vendida.':(miLot.estado==='confirmado'?`Pagados ${eur(LOTERIA)} · confirmado.`:`Pendiente: ${eur(LOTERIA)}.`)}</div>`:`<div class="sub">Todavía no has elegido.</div>`}
+  </div>`;
+
+  h += `<div class="card">` + SOCIOS.map(n=>{
+    const l = loteria.find(x=>x.id===slug(n));
+    const st = !l ? tag('Sin decidir','t-mut')
+      : l.modo==='vende' ? tag('Vende','t-ok')
+      : l.estado==='confirmado' ? tag('Pagada','t-ok') : tag('Debe '+eur(LOTERIA),'t-late');
+    return `<div class="li">
+      ${av(n, n===ME?'on':'')}
+      <div class="li-main"><div class="li-name">${esc(n)}</div></div>
+      ${st}
+      ${isAdmin()?`<div class="row-btns">
+        <button class="btn-xs ghost" onclick="setLot('${esc(n)}','vende')">V</button>
+        <button class="btn-xs ${l&&l.modo==='paga'&&l.estado==='confirmado'?'':'ghost'}" onclick="cobrarLot('${esc(n)}')">€</button>
+      </div>`:''}
+    </div>`;
+  }).join('') + `</div>`;
+
+  /* ── PAGOS EXTRA ── */
+  h += `<span class="lbl">Pagos extra</span>`;
+  if(isAdmin()) h += `<button class="btn-g" style="width:100%;margin-bottom:10px" onclick="openExtra()">+ Crear pago extra</button>`;
+  if(!extras.length) h += `<div class="empty">No hay pagos extra ahora mismo.</div>`;
+
+  extras.slice().sort((a,b)=>b.id-a.id).forEach(e=>{
+    const socios = Array.isArray(e.socios)?e.socios:[];
+    const conf = socios.filter(n=>(e.pagos||{})[n]==='confirmado').length;
+    const miSt = (e.pagos||{})[ME];
+    h += `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+        <div style="min-width:0">
+          <div class="mid">${esc(e.titulo)}</div>
+          <div class="sub">${eur(e.importe)} por socio · ${conf} de ${socios.length} pagados</div>
+        </div>
+        ${isAdmin()?`<button class="btn-xs danger" onclick="delExtra(${e.id})">×</button>`:''}
+      </div>
+      <div class="bar" style="margin-top:12px"><div class="bar-fill" style="width:${socios.length?Math.round(conf/socios.length*100):0}%"></div></div>
+      ${socios.includes(ME)?`<div style="margin-top:12px">${
+        miSt==='confirmado' ? tag('Ya lo has pagado','t-ok')
+        : miSt==='declarado' ? tag('Enviado · falta confirmar','t-dec')
+        : `<button class="btn" onclick="pagarExtra(${e.id})">He pagado los ${eur(e.importe)}</button>`
+      }</div>`:''}
+      ${isAdmin()?`<div style="margin-top:12px;border-top:1px solid var(--line);padding-top:6px">` + socios.map(n=>{
+        const st=(e.pagos||{})[n];
+        return `<div class="li">
+          <div class="li-main"><div class="li-name" style="font-size:13px">${esc(n)}</div></div>
+          ${st==='confirmado'?tag('Pagado','t-ok'):st==='declarado'?tag('Por confirmar','t-dec'):tag('Debe','t-late')}
+          <button class="btn-xs ${st==='confirmado'?'ghost':''}" onclick="togExtra(${e.id},'${esc(n)}')">${st==='confirmado'?'↺':'✓'}</button>
+        </div>`;
+      }).join('') + `</div>`:''}
+    </div>`;
+  });
+
+  /* ── DEUDAS 25/26 ── */
+  h += `<span class="lbl">Temporada 25/26</span>`;
+  if(isAdmin()) h += `<button class="btn-g" style="width:100%;margin-bottom:10px" onclick="openDeuda()">+ Añadir deuda anterior</button>`;
+  const dAct = deudas.filter(d=>!d.saldado);
+  if(!dAct.length) h += `<div class="empty">Sin deudas de la temporada pasada.</div>`;
+  h += dAct.length ? `<div class="card">` + dAct.sort((a,b)=>b.importe-a.importe).map(d=>`
+    <div class="li">
+      ${av(d.name)}
+      <div class="li-main"><div class="li-name">${esc(d.name)}</div><div class="li-sub">${esc(d.concepto||'')}</div></div>
+      <div class="mid" style="color:var(--red);font-size:20px">${eur(d.importe)}</div>
+      ${isAdmin()?`<button class="btn-xs" onclick="saldarDeuda('${d.id}')">✓</button>`:''}
+    </div>`).join('') + `</div>` : '';
+
+  const saldadas = deudas.filter(d=>d.saldado);
+  if(saldadas.length) h += `<div class="card" style="opacity:.6">` + saldadas.map(d=>`
+    <div class="li"><div class="li-main"><div class="li-name" style="font-size:13px">${esc(d.name)} · ${eur(d.importe)}</div></div>${tag('Saldada','t-ok')}
+    ${isAdmin()?`<button class="btn-xs ghost" onclick="reabrirDeuda('${d.id}')">↺</button>`:''}</div>`).join('') + `</div>`;
+
+  document.getElementById('body-extras').innerHTML = h;
+}
+
+/* ── lotería ── */
+function setLot(name, modo){
+  if(name!==ME && !isAdmin()) return;
+  const prev = loteria.find(l=>l.id===slug(name));
+  const estado = modo==='vende' ? 'confirmado'
+    : (isAdmin() ? 'confirmado' : (prev && prev.estado==='confirmado' ? 'confirmado' : 'declarado'));
+  fbSet('loteria', {id:slug(name), name, modo, estado, at:nowISO(), by:ME});
+}
+function cobrarLot(name){
+  if(!isAdmin()) return;
+  const l = loteria.find(x=>x.id===slug(name));
+  const yaPagada = l && l.modo==='paga' && l.estado==='confirmado';
+  fbSet('loteria', {id:slug(name), name, modo:'paga', estado: yaPagada?'declarado':'confirmado', at:nowISO(), by:ME});
+}
+
+/* ── extras ── */
+let exSel = {};
+function openExtra(){
+  if(!isAdmin()) return;
+  exSel = {}; SOCIOS.forEach(n=>exSel[n]=true);
+  document.getElementById('exTitulo').value='';
+  document.getElementById('exImporte').value='';
+  renderExSocios(); openM('mExtra');
+}
+function renderExSocios(){
+  document.getElementById('exSocios').innerHTML = SOCIOS.map(n=>
+    `<button class="pill ${exSel[n]?'on':''}" onclick="togEx('${esc(n)}')">${esc(n)}</button>`).join('');
+}
+function togEx(n){ exSel[n]=!exSel[n]; renderExSocios(); }
+function exAll(v){ SOCIOS.forEach(n=>exSel[n]=v); renderExSocios(); }
+function saveExtra(){
+  const titulo = document.getElementById('exTitulo').value.trim();
+  const imp = parseFloat(document.getElementById('exImporte').value.trim().replace(',','.'));
+  if(!titulo){ alert("Ponle un concepto."); return; }
+  if(!imp || isNaN(imp) || imp<=0){ alert("Pon un importe válido."); return; }
+  const socios = SOCIOS.filter(n=>exSel[n]);
+  if(!socios.length){ alert("Elige al menos un socio."); return; }
+  const id = extras.reduce((m,e)=>Math.max(m,e.id||0),0)+1;
+  fbSet('extras', {id, titulo, importe:imp, fecha:todayISO(), socios, pagos:{}, creadoPor:ME});
+  closeM('mExtra');
+}
+function pagarExtra(id){
+  const e = extras.find(x=>x.id===id); if(!e) return;
+  const n = clone(e); n.pagos = n.pagos||{};
+  n.pagos[ME] = isAdmin() ? 'confirmado' : 'declarado';
+  fbSet('extras', n);
+}
+function togExtra(id, name){
+  if(!isAdmin()) return;
+  const e = extras.find(x=>x.id===id); if(!e) return;
+  const n = clone(e); n.pagos = n.pagos||{};
+  n.pagos[name] = n.pagos[name]==='confirmado' ? null : 'confirmado';
+  if(!n.pagos[name]) delete n.pagos[name];
+  fbSet('extras', n);
+}
+function delExtra(id){
+  if(!isAdmin()) return;
+  const e = extras.find(x=>x.id===id); if(!e) return;
+  if(!confirm(`¿Eliminar "${e.titulo}"?`)) return;
+  fbDel('extras', id);
+}
+
+/* ── deudas ── */
+let deSel = null;
+function openDeuda(){
+  if(!isAdmin()) return;
+  deSel = null;
+  document.getElementById('deImporte').value='';
+  document.getElementById('deConcepto').value='';
+  renderDeSocios(); openM('mDeuda');
+}
+function renderDeSocios(){
+  document.getElementById('deSocios').innerHTML = SOCIOS.map(n=>
+    `<button class="pill ${deSel===n?'on':''}" onclick="pickDe('${esc(n)}')">${esc(n)}</button>`).join('');
+}
+function pickDe(n){ deSel=n; renderDeSocios(); }
+function saveDeuda(){
+  if(!deSel){ alert("Elige el socio."); return; }
+  const imp = parseFloat(document.getElementById('deImporte').value.trim().replace(',','.'));
+  if(!imp || isNaN(imp) || imp<=0){ alert("Pon un importe válido."); return; }
+  const concepto = document.getElementById('deConcepto').value.trim() || "Temporada 25/26";
+  fbSet('deudas', {id:slug(deSel), name:deSel, importe:imp, concepto, saldado:false, at:nowISO()});
+  closeM('mDeuda');
+}
+function reabrirDeuda(id){
+  if(!isAdmin()) return;
+  const d = deudas.find(x=>x.id===id); if(!d) return;
+  const n = clone(d); n.saldado=false; n.saldadoAt=null; fbSet('deudas', n);
+}
+
+/* ═══════════════ MODALES ═══════════════ */
+function openM(id){ document.getElementById(id).classList.add('open'); }
+function closeM(id){ document.getElementById(id).classList.remove('open'); }
+function bgClose(e,id){ if(e.target===document.getElementById(id)) closeM(id); }
+</script>
+</body>
+</html>
