@@ -37,7 +37,7 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
 .brand{display:flex;flex-direction:column;align-items:flex-start;gap:5px;}
 .brand-top{font-size:10px;letter-spacing:5px;color:var(--muted);text-transform:uppercase;font-weight:600;}
 .brand-main{background:var(--accent);color:#0B1226;font-family:'Archivo Black',sans-serif;font-size:clamp(26px,8vw,34px);letter-spacing:-.02em;padding:3px 11px 5px;line-height:1;text-transform:uppercase;}
-.brand-sub{border:1.5px solid var(--accent);color:var(--accent);font-size:11px;letter-spacing:4px;font-weight:700;padding:4px 12px;border-radius:99px;text-transform:uppercase;}
+.brand-sub{border:1.5px solid var(--accent);color:var(--accent);font-size:11px;letter-spacing:4px;font-weight:700;padding:4px 11px 5px;text-transform:uppercase;}
 
 /* ── LAYOUT ─────────────────────────────────────────── */
 .head{padding:calc(26px + env(safe-area-inset-top)) 22px 22px;border-bottom:1px solid var(--line);}
@@ -93,6 +93,7 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
 .mes.dec{background:rgba(242,166,90,.14);border-color:var(--amber);color:var(--amber);}
 .mes.late{background:rgba(229,56,59,.14);border-color:var(--red);color:var(--red);}
 .mes.next{color:var(--faint);}
+.mes.na{color:var(--faint);opacity:.35;}
 .mes.pick{cursor:pointer;}
 .mes.sel{background:var(--accent);border-color:var(--accent);color:#0B1226;}
 
@@ -198,7 +199,7 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
 <div id="menu" style="display:none">
   <div class="head">
     <div class="brand">
-      <span class="brand-top">Temporada 26/27</span>
+      <span class="brand-top" id="brandTemp">Temporada 26/27</span>
       <span class="brand-main">FCB Fans</span>
       <span class="brand-sub">Castelló</span>
     </div>
@@ -224,7 +225,7 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
 </div>
 
 <div class="section" id="sec-penya">
-  <div class="sec-head"><button class="back" onclick="goMenu()">← Menú</button><div class="sec-title">La penya</div></div>
+  <div class="sec-head"><button class="back" onclick="goMenu()">← Menú</button><div class="sec-title">Socios</div></div>
   <div class="wrap" id="body-penya"></div>
 </div>
 
@@ -239,7 +240,7 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
 </div>
 
 <div class="section" id="sec-socio">
-  <div class="sec-head"><button class="back" onclick="goSection('penya')">← La penya</button><div class="sec-title" id="socioTitle">Socio</div></div>
+  <div class="sec-head"><button class="back" onclick="goSection('penya')">← Socios</button><div class="sec-title" id="socioTitle">Socio</div></div>
   <div class="wrap" id="body-socio"></div>
 </div>
 
@@ -311,6 +312,25 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
   </div>
 </div>
 
+<!-- ══════════════════ MODAL · NUEVO SOCIO ══════════════════ -->
+<div class="ov" id="mSocio" onclick="bgClose(event,'mSocio')">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-t">Nuevo socio</div>
+      <button class="x" onclick="closeM('mSocio')" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body">
+    <div class="modal-s">Entra en la lista y empieza a pagar desde el mes que le marques. Los meses anteriores no se le cuentan.</div>
+    <div class="field"><label>Nombre</label><input class="inp" id="soNombre" placeholder="Ej: Vicent"/></div>
+    <div class="field"><label>Empieza a pagar en</label><div class="meses" id="soDesde"></div></div>
+    <div class="modal-f">
+      <button class="btn-g" style="flex:1" onclick="closeM('mSocio')">Cancelar</button>
+      <button class="btn" style="flex:2" onclick="saveSocio()">Dar de alta</button>
+    </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════════ MODAL · DEUDA ══════════════════ -->
 <div class="ov" id="mDeuda" onclick="bgClose(event,'mDeuda')">
   <div class="modal">
@@ -321,6 +341,7 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
     <div class="modal-body">
     <div class="modal-s">Lo que arrastra un socio de la temporada 25/26.</div>
     <div class="field"><label>Socio</label><div class="pills" id="deSocios"></div></div>
+    <div class="field" id="deOtroWrap" style="display:none"><label>Nombre</label><input class="inp" id="deOtro" placeholder="Ej: Murta"/></div>
     <div class="field"><label>Importe (€)</label><input class="inp" type="text" inputmode="decimal" id="deImporte" placeholder="Ej: 265"/></div>
     <div class="field"><label>Concepto</label><input class="inp" id="deConcepto" placeholder="Ej: Temporada completa + lotería"/></div>
     <div class="modal-f">
@@ -378,37 +399,50 @@ window.addEventListener('fb-ready', () => window.__start());
    Sube APP_VERSION en cada despliegue.
    ═══════════════════════════════════════════════════════════════ */
 
-const APP_VERSION = 3;
+const APP_VERSION = 6;
 const ADMIN = "David";                 // único que confirma
 const PIN_ADMIN = "1899";              // clave del tesorero
 const CUOTA = 20;                      // € al mes
 const LOTERIA = 25;                    // € si no vende lotería
 const IBAN = "ES03 0182 1294 1802 0450 9099";
-const TEMPORADA = "26/27";
 
-/* ── SOCIOS ── cambia aquí los nombres y ya está ─────────────── */
-const SOCIOS = [
+/* ── TEMPORADAS ───────────────────────────────────────────────
+   Todo lo que se registra queda marcado con su temporada. Al abrir
+   una nueva, la anterior se queda guardada entera y se puede
+   consultar cuando quieras. Nada se borra.                      */
+const TEMP_BASE  = "26/27";     // la primera temporada de la app
+let   TEMP       = TEMP_BASE;   // la que estás viendo
+let   TEMP_ACTIVA= TEMP_BASE;   // la que está en curso
+let   TEMPS      = [TEMP_BASE]; // todas las que existen
+const tempStart  = t => 2000 + parseInt(String(t).slice(0,2),10);
+const tempNext   = t => { const a=parseInt(String(t).slice(0,2),10)+1;
+  return `${String(a).padStart(2,'0')}/${String(a+1).padStart(2,'0')}`; };
+const sufijo     = t => t===TEMP_BASE ? "" : slug(t)+"_";   // ids de la 1ª temporada sin prefijo
+
+/* ── SOCIOS ── lista de partida. Las altas y bajas que hagas desde
+   la app se guardan en Firebase y mandan sobre esta lista. ────── */
+const SOCIOS_BASE = [
   "David","Campos","Carlitos","Gómez","Guillem","Ignacio","Joseva",
-  "Lee","Manel","Marta","Murta","Pablo","Pepo","Ros","Rulo",
+  "Lee","Manel","Marta","Pablo","Pepo","Ros","Rulo",
   "Samjesús","Wator"
 ];
+let SOCIOS = SOCIOS_BASE.slice();   // lista viva, se recalcula con Firebase
 
-/* ── MESES: septiembre 2026 → agosto 2027 ────────────────────── */
-const MESES = [
-  {k:"sep",l:"Sep",n:"Septiembre",y:2026,m:8},
-  {k:"oct",l:"Oct",n:"Octubre",   y:2026,m:9},
-  {k:"nov",l:"Nov",n:"Noviembre", y:2026,m:10},
-  {k:"dic",l:"Dic",n:"Diciembre", y:2026,m:11},
-  {k:"ene",l:"Ene",n:"Enero",     y:2027,m:0},
-  {k:"feb",l:"Feb",n:"Febrero",   y:2027,m:1},
-  {k:"mar",l:"Mar",n:"Marzo",     y:2027,m:2},
-  {k:"abr",l:"Abr",n:"Abril",     y:2027,m:3},
-  {k:"may",l:"May",n:"Mayo",      y:2027,m:4},
-  {k:"jun",l:"Jun",n:"Junio",     y:2027,m:5},
-  {k:"jul",l:"Jul",n:"Julio",     y:2027,m:6},
-  {k:"ago",l:"Ago",n:"Agosto",    y:2027,m:7},
+/* ── MESES: de septiembre a agosto de la temporada que se mira ── */
+const MES_DEF = [
+  ["sep","Sep","Septiembre",8],["oct","Oct","Octubre",9],
+  ["nov","Nov","Noviembre",10],["dic","Dic","Diciembre",11],
+  ["ene","Ene","Enero",0],     ["feb","Feb","Febrero",1],
+  ["mar","Mar","Marzo",2],     ["abr","Abr","Abril",3],
+  ["may","May","Mayo",4],      ["jun","Jun","Junio",5],
+  ["jul","Jul","Julio",6],     ["ago","Ago","Agosto",7],
 ];
-const TOTAL_TEMP = MESES.length * CUOTA;   // 240 €
+let MESES = [];
+function buildMeses(){
+  const y0 = tempStart(TEMP);
+  MESES = MES_DEF.map(([k,l,n,m])=>({k,l,n,m,y: m>=8 ? y0 : y0+1}));
+}
+const TOTAL_TEMP = MES_DEF.length * CUOTA;   // 240 €
 
 const METODOS = {
   transferencia:{l:"Transferencia"},
@@ -418,11 +452,11 @@ const METODOS = {
 
 /* ═══════════════ ESTADO ═══════════════ */
 let ME = null;
-let pagos = [], extras = [], loteria = [], deudas = [];
+let pagos = [], extras = [], loteria = [], deudas = [], socios = [];
 let DB_ = null;
 let currentSection = null;
-let ready = {pagos:false, extras:false, loteria:false, deudas:false};
-const COLS = ["pagos","extras","loteria","deudas"];
+let ready = {pagos:false, extras:false, loteria:false, deudas:false, socios:false};
+const COLS = ["pagos","extras","loteria","deudas","socios"];
 
 /* ═══════════════ HELPERS ═══════════════ */
 const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -440,8 +474,9 @@ const tag = (t,c) => `<span class="tag ${c}">${esc(t)}</span>`;
    El 17 de septiembre, quien no haya pagado septiembre ya es moroso. */
 function idxActual(){
   const d = new Date();
-  const i = (d.getFullYear()-2026)*12 + (d.getMonth()-8);
-  return Math.max(0, Math.min(MESES.length-1, i));
+  const i = (d.getFullYear()-tempStart(TEMP))*12 + (d.getMonth()-8);
+  if(i < 0) return -1;                       // temporada aún por empezar
+  return Math.min(MESES.length-1, i);
 }
 const mesVencido = i => i <= idxActual();
 
@@ -465,6 +500,21 @@ function setLocal(col, arr){
   if(col==="extras") extras = arr;
   if(col==="loteria") loteria = arr;
   if(col==="deudas") deudas = arr;
+  if(col==="socios"){ socios = arr; recalcSocios(); }
+}
+/* La lista de socios = los de partida menos las bajas, más las altas nuevas. */
+function recalcSocios(){
+  const baja = n => socios.some(s=>s.id===slug(n) && s.baja);
+  const base = SOCIOS_BASE.filter(n=>!baja(n));
+  const nuevos = socios.filter(s=>s.alta && !s.baja).map(s=>s.name);
+  SOCIOS = [...base, ...nuevos.filter(n=>!base.includes(n))];
+}
+/* Desde qué mes paga un socio (los nuevos no deben los meses anteriores). */
+function desdeIdx(name){
+  const s = socios.find(x=>x.id===slug(name));
+  if(!s || !s.desde) return 0;
+  const i = MESES.findIndex(m=>m.k===s.desde);
+  return i<0 ? 0 : i;
 }
 function subscribe(){
   COLS.forEach(col=>{
@@ -483,6 +533,31 @@ function onData(){
   document.getElementById('loader').style.display='none';
   if(ME){ if(currentSection) render(currentSection); renderMenu(); }
 }
+function watchTemporada(){
+  DB_.onSnapshot(DB_.doc(DB_.db,"meta","temporada"), snap=>{
+    const d = snap.exists() ? snap.data() : null;
+    TEMP_ACTIVA = (d && d.activa) ? d.activa : TEMP_BASE;
+    TEMPS = (d && Array.isArray(d.temps) && d.temps.length) ? d.temps : [TEMP_BASE];
+    if(!TEMPS.includes(TEMP_ACTIVA)) TEMPS.push(TEMP_ACTIVA);
+    if(!TEMPS.includes(TEMP)) TEMP = TEMP_ACTIVA;
+    if(!localStorage.getItem('fcb_temp_visto')) TEMP = TEMP_ACTIVA;
+    buildMeses();
+    if(ME){ if(currentSection) render(currentSection); renderMenu(); }
+  }, ()=>{ buildMeses(); });
+}
+function verTemporada(t){
+  TEMP = t; buildMeses();
+  localStorage.setItem('fcb_temp_visto','1');
+  if(currentSection) render(currentSection); else renderMenu();
+}
+function abrirTemporada(){
+  if(!isAdmin()) return;
+  const nueva = tempNext(TEMP_ACTIVA);
+  if(!confirm(`¿Abrir la temporada ${nueva}?\n\nLa ${TEMP_ACTIVA} se queda guardada entera y podrás consultarla cuando quieras. Los socios empiezan de cero, con los mismos ${CUOTA} € al mes.\n\nLo que quede sin pagar de la ${TEMP_ACTIVA} lo añades tú en Morosos como deuda anterior.`)) return;
+  const temps = TEMPS.includes(nueva) ? TEMPS : [...TEMPS, nueva];
+  fbSet('meta', {id:"temporada", activa:nueva, temps, at:nowISO(), by:ME});
+  setTimeout(()=>verTemporada(nueva), 600);
+}
 function watchVersion(){
   DB_.onSnapshot(DB_.doc(DB_.db,"meta","app"), snap=>{
     const d = snap.exists() ? snap.data() : null;
@@ -493,6 +568,8 @@ function watchVersion(){
 /* ═══════════════ ARRANQUE ═══════════════ */
 window.__start = function(){
   DB_ = window.DB;
+  buildMeses();
+  watchTemporada();
   watchVersion();
   subscribe();
   setTimeout(()=>{ document.getElementById('loader').style.display='none'; if(!ME) renderGate(); }, 6000);
@@ -573,24 +650,32 @@ function logout(){
 }
 
 /* ═══════════════ CÁLCULO ═══════════════ */
-const pagoId = (name,mes) => `${slug(name)}_${mes}`;
+const esDe = o => (o && o.temp ? o.temp : TEMP_BASE) === TEMP;   // ¿es de la temporada que miro?
+const pagoId = (name,mes) => `${sufijo(TEMP)}${slug(name)}_${mes}`;
+const lotId  = name => `${sufijo(TEMP)}${slug(name)}`;
 const getPago = (name,mes) => pagos.find(p=>p.id===pagoId(name,mes)) || null;
+const pagosTemp = () => pagos.filter(esDe);
+const extrasTemp = () => extras.filter(esDe);
+const loteriaTemp = () => loteria.filter(esDe);
 
 function estadoMes(name, i){
   const p = getPago(name, MESES[i].k);
   if(p && p.estado==="confirmado") return "ok";
   if(p && p.estado==="declarado")  return "dec";
+  if(i < desdeIdx(name)) return "na";       // aún no era socio
   return mesVencido(i) ? "late" : "next";
 }
 function resumen(name){
   let ok=0, dec=0, late=0;
   MESES.forEach((m,i)=>{ const e=estadoMes(name,i); if(e==="ok")ok++; else if(e==="dec")dec++; else if(e==="late")late++; });
+  const nMeses = MESES.length - desdeIdx(name);
+  const totalSuyo = nMeses * CUOTA;
   const deuda = deudas.filter(d=>d.name===name && !d.saldado).reduce((s,d)=>s+(Number(d.importe)||0),0);
-  const lot = loteria.find(l=>l.id===slug(name)) || null;
+  const lot = loteria.find(l=>l.id===lotId(name)) || null;
   const lotDeuda = (lot && lot.modo==="paga" && lot.estado!=="confirmado") ? LOTERIA : 0;
   const ex = extrasPendientes(name);
   return {
-    ok, dec, late,
+    ok, dec, late, nMeses, totalSuyo,
     pagado: ok*CUOTA,
     porConfirmar: dec*CUOTA,
     debeMeses: late*CUOTA,
@@ -599,12 +684,12 @@ function resumen(name){
     extraDeuda: ex.total,
     extraList: ex.list,
     debeTotal: late*CUOTA + deuda + lotDeuda + ex.total,
-    pct: Math.round((ok/MESES.length)*100),
+    pct: nMeses ? Math.round((ok/nMeses)*100) : 0,
   };
 }
 function extrasPendientes(name){
   let total=0; const list=[];
-  extras.forEach(e=>{
+  extrasTemp().forEach(e=>{
     if(!Array.isArray(e.socios) || !e.socios.includes(name)) return;
     const st = (e.pagos||{})[name];
     if(st!=="confirmado"){ if(st!=="declarado") total += Number(e.importe)||0; list.push({e, st: st||"pendiente"}); }
@@ -612,15 +697,15 @@ function extrasPendientes(name){
   return {total, list};
 }
 function recaudado(){
-  const cuotas = pagos.filter(p=>p.estado==="confirmado").length * CUOTA;
-  const lot = loteria.filter(l=>l.modo==="paga" && l.estado==="confirmado").length * LOTERIA;
-  let ex=0; extras.forEach(e=>{ Object.values(e.pagos||{}).forEach(v=>{ if(v==="confirmado") ex += Number(e.importe)||0; }); });
+  const cuotas = pagosTemp().filter(p=>p.estado==="confirmado").length * CUOTA;
+  const lot = loteriaTemp().filter(l=>l.modo==="paga" && l.estado==="confirmado").length * LOTERIA;
+  let ex=0; extrasTemp().forEach(e=>{ Object.values(e.pagos||{}).forEach(v=>{ if(v==="confirmado") ex += Number(e.importe)||0; }); });
   return {cuotas, lot, ex, total: cuotas+lot+ex};
 }
 const porConfirmarCount = () =>
-  pagos.filter(p=>p.estado==="declarado").length
-  + loteria.filter(l=>l.estado==="declarado").length
-  + extras.reduce((s,e)=>s+Object.values(e.pagos||{}).filter(v=>v==="declarado").length,0);
+  pagosTemp().filter(p=>p.estado==="declarado").length
+  + loteriaTemp().filter(l=>l.estado==="declarado").length
+  + extrasTemp().reduce((s,e)=>s+Object.values(e.pagos||{}).filter(v=>v==="declarado").length,0);
 
 /* ═══════════════ NAVEGACIÓN ═══════════════ */
 function goMenu(){
@@ -644,11 +729,21 @@ function render(k){
   if(k==='morosos') renderMorosos();
   if(k==='extras') renderExtras();
   if(k==='socio') renderSocio();
+  avisoTemporada(k);
+}
+/* Aviso fijo si estás mirando una temporada que ya no está en curso. */
+function avisoTemporada(k){
+  if(TEMP===TEMP_ACTIVA) return;
+  const el = document.getElementById('body-'+k); if(!el) return;
+  const d = document.createElement('div');
+  d.className = 'note note-o';
+  d.innerHTML = `Estás viendo la temporada <b>${TEMP}</b>, que ya está cerrada. <a href="#" onclick="verTemporada('${TEMP_ACTIVA}');return false" style="color:inherit"><u>Volver a la ${TEMP_ACTIVA}</u></a>`;
+  el.insertBefore(d, el.firstChild);
 }
 
 const MENU = [
   {k:"mis",     l:"Mis pagos", d:"Registra aquí lo que pagas"},
-  {k:"penya",   l:"La penya",  d:"Lo que lleva pagado cada uno"},
+  {k:"penya",   l:"Socios",    d:"Lo que lleva pagado cada uno"},
   {k:"morosos", l:"Morosos",   d:"Quién debe y cuánto"},
   {k:"extras",  l:"Extras",    d:"Lotería y pagos puntuales"},
 ];
@@ -678,6 +773,8 @@ function renderMenu(){
     </div>`;
   }).join('');
   const rec = recaudado();
+  const bt = document.getElementById('brandTemp');
+  if(bt) bt.textContent = `Temporada ${TEMP}` + (TEMP!==TEMP_ACTIVA ? ' · cerrada' : '');
   document.getElementById('menuFoot').textContent =
     `${SOCIOS.length} socios · ${CUOTA} €/mes · recaudado ${eur(rec.total)}`;
 }
@@ -686,9 +783,9 @@ function renderMenu(){
 function renderMis(){
   const r = resumen(ME);
   let h = `<div class="hero">
-    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--faint);font-weight:700">Temporada ${TEMPORADA}</div>
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--faint);font-weight:700">Temporada ${TEMP}</div>
     <div class="big" style="color:var(--accent);margin-top:8px">${eur(r.pagado)}</div>
-    <div class="sub">de ${eur(TOTAL_TEMP)} · ${r.ok} de ${MESES.length} meses confirmados</div>
+    <div class="sub">de ${eur(r.totalSuyo)} · ${r.ok} de ${r.nMeses} meses confirmados</div>
     <div class="bar"><div class="bar-fill" style="width:${r.pct}%"></div></div>
   </div>`;
 
@@ -721,7 +818,7 @@ function renderMis(){
     <button class="btn-g" style="width:100%;margin-top:12px" onclick="copiar('${IBAN.replace(/ /g,'')}','IBAN copiado')">Copiar IBAN</button>
   </div>`;
 
-  const mios = pagos.filter(p=>p.name===ME).sort((a,b)=>(b.declaradoAt||'').localeCompare(a.declaradoAt||''));
+  const mios = pagosTemp().filter(p=>p.name===ME).sort((a,b)=>(b.declaradoAt||'').localeCompare(a.declaradoAt||''));
   h += `<span class="lbl">Mi historial</span>`;
   if(!mios.length) h += `<div class="empty">Todavía no has marcado ningún pago.</div>`;
   else h += `<div class="card">` + mios.map(p=>{
@@ -742,8 +839,8 @@ function renderMis(){
 function mesesGrid(name, clickable){
   return `<div class="meses">` + MESES.map((m,i)=>{
     const e = estadoMes(name,i);
-    const sub = e==='ok'?'Pagado':e==='dec'?'Enviado':e==='late'?'Debe':'—';
-    const can = clickable && e!=='ok';
+    const sub = e==='ok'?'Pagado':e==='dec'?'Enviado':e==='late'?'Debe':e==='na'?'No era':'—';
+    const can = clickable && e!=='ok' && e!=='na';
     return `<div class="mes ${e}${can?' pick':''}"${can?` onclick="openPago('${esc(name)}','${m.k}')"`:''}><div class="mes-k">${m.l}</div><div class="mes-s">${sub}</div></div>`;
   }).join('') + `</div>`;
 }
@@ -826,7 +923,7 @@ function savePago(){
   const estado = isAdmin() ? "confirmado" : "declarado";
   keys.forEach(k=>{
     fbSet('pagos', {
-      id: pagoId(pagoTarget,k), name: pagoTarget, mes: k, importe: CUOTA,
+      id: pagoId(pagoTarget,k), temp: TEMP, name: pagoTarget, mes: k, importe: CUOTA,
       metodo: pagoMetodo, estado,
       declaradoAt: nowISO(), declaradoPor: ME,
       confirmadoAt: estado==="confirmado" ? nowISO() : null,
@@ -848,19 +945,23 @@ function verFoto(id){
 /* ═══════════════ LA PENYA ═══════════════ */
 function renderPenya(){
   const rec = recaudado();
-  const objetivo = SOCIOS.length * TOTAL_TEMP;
+  const objetivo = SOCIOS.reduce((s,n)=>s+resumen(n).totalSuyo,0);
   const pct = Math.round(rec.total/objetivo*100);
 
   let h = `<div class="hero">
     <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--faint);font-weight:700">Recaudado</div>
     <div class="big" style="color:var(--accent);margin-top:8px">${eur(rec.total)}</div>
-    <div class="sub">Objetivo temporada: ${eur(objetivo)} · ${SOCIOS.length} socios × ${eur(TOTAL_TEMP)}</div>
+    <div class="sub">Objetivo temporada: ${eur(objetivo)} · ${SOCIOS.length} socios · ${eur(CUOTA)} al mes</div>
     <div class="bar"><div class="bar-fill" style="width:${Math.min(100,pct)}%"></div></div>
     <div class="sub" style="margin-top:8px">Cuotas ${eur(rec.cuotas)} · Lotería ${eur(rec.lot)} · Extras ${eur(rec.ex)}</div>
+  </div>
+  <div class="note note-r">
+    <b>Somos ${SOCIOS.length} socios a ${eur(CUOTA)} al mes.</b><br>
+    Aunque paguemos todos, la temporada no se cubre sola. Cada cuota cuenta y cada retraso se nota. Pagad a tiempo.
   </div>`;
 
   if(isAdmin()){
-    const pend = pagos.filter(p=>p.estado==="declarado").sort((a,b)=>(a.declaradoAt||'').localeCompare(b.declaradoAt||''));
+    const pend = pagosTemp().filter(p=>p.estado==="declarado").sort((a,b)=>(a.declaradoAt||'').localeCompare(b.declaradoAt||''));
     h += `<span class="lbl">Por confirmar (${pend.length})</span>`;
     if(!pend.length) h += `<div class="empty">Nada pendiente de confirmar.</div>`;
     pend.forEach(p=>{
@@ -894,12 +995,42 @@ function renderPenya(){
       <div class="li-main">
         <div class="li-name">${esc(n)}${n===ME?' <span style="color:var(--faint);font-size:10px">(tú)</span>':''}</div>
         <div class="bar-sm" style="margin-top:6px"><div class="bar-fill" style="width:${r.pct}%"></div></div>
-        <div class="li-sub">${eur(r.pagado)} de ${eur(TOTAL_TEMP)}</div>
+        <div class="li-sub">${eur(r.pagado)} de ${eur(r.totalSuyo)}</div>
       </div>
       ${st}
       <span style="color:var(--faint)">›</span>
     </div>`;
   }).join('') + `</div>`;
+
+  /* ── Temporadas ── */
+  h += `<span class="lbl">Temporadas</span>`;
+  h += `<div class="card">
+    <div class="pills">${TEMPS.slice().sort().map(t=>
+      `<button class="pill ${t===TEMP?'on':''}" onclick="verTemporada('${t}')">${t}${t===TEMP_ACTIVA?' ·':''}</button>`).join('')}</div>
+    <div class="sub">Las temporadas cerradas se guardan enteras. Puedes consultarlas cuando quieras.</div>
+    ${isAdmin()?`<button class="btn-g" style="width:100%;margin-top:12px" onclick="abrirTemporada()">Abrir temporada ${tempNext(TEMP_ACTIVA)}</button>`:''}
+  </div>`;
+
+  if(isAdmin()){
+    h += `<span class="lbl">Gestión de socios</span>
+    <button class="btn-g" style="width:100%" onclick="openSocioNuevo()">+ Dar de alta un socio</button>`;
+    const bajas = socios.filter(s=>s.baja);
+    if(bajas.length){
+      h += `<span class="lbl">Bajas (${bajas.length})</span>
+      <div class="hint">Se quedan registradas con lo que pagaron. Si dejaron deuda, métela en Morosos.</div>`;
+      h += `<div class="card">` + bajas.map(s=>{
+        const suyos = pagosTemp().filter(p=>p.name===s.name && p.estado==='confirmado');
+        return `<div class="li">
+          ${av(s.name)}
+          <div class="li-main">
+            <div class="li-name" style="font-size:13px">${esc(s.name)}</div>
+            <div class="li-sub">Pagó ${eur(suyos.length*CUOTA)} esta temporada${s.at?' · baja el '+s.at.slice(8,10)+'/'+s.at.slice(5,7)+'/'+s.at.slice(2,4):''}</div>
+          </div>
+          <button class="btn-xs ghost" onclick="reactivarSocio('${s.id}')">Reactivar</button>
+        </div>`;
+      }).join('') + `</div>`;
+    }
+  }
 
   document.getElementById('body-penya').innerHTML = h;
 }
@@ -924,9 +1055,9 @@ function renderSocio(){
   document.getElementById('socioTitle').textContent = n;
 
   let h = `<div class="hero">
-    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--faint);font-weight:700">Temporada ${TEMPORADA}</div>
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--faint);font-weight:700">Temporada ${TEMP}</div>
     <div class="big" style="color:${r.debeTotal>0?'var(--red)':'var(--accent)'};margin-top:8px">${r.debeTotal>0?eur(r.debeTotal):eur(r.pagado)}</div>
-    <div class="sub">${r.debeTotal>0?`Debe · ha pagado ${eur(r.pagado)} de ${eur(TOTAL_TEMP)}`:`Pagado de ${eur(TOTAL_TEMP)}`}</div>
+    <div class="sub">${r.debeTotal>0?`Debe · ha pagado ${eur(r.pagado)} de ${eur(r.totalSuyo)}`:`Pagado de ${eur(r.totalSuyo)}`}</div>
     <div class="bar"><div class="bar-fill" style="width:${r.pct}%"></div></div>
   </div>`;
 
@@ -948,7 +1079,7 @@ function renderSocio(){
 
   if(isAdmin()){
     h += `<button class="btn" style="margin-top:14px" onclick="openPago('${esc(n)}')">Registrar varios meses de ${esc(n)}</button>`;
-    const suyos = pagos.filter(p=>p.name===n).sort((a,b)=>MESES.findIndex(m=>m.k===a.mes)-MESES.findIndex(m=>m.k===b.mes));
+    const suyos = pagosTemp().filter(p=>p.name===n).sort((a,b)=>MESES.findIndex(m=>m.k===a.mes)-MESES.findIndex(m=>m.k===b.mes));
     if(suyos.length){
       h += `<span class="lbl">Movimientos</span><div class="card">` + suyos.map(p=>{
         const m = MESES.find(x=>x.k===p.mes);
@@ -960,6 +1091,9 @@ function renderSocio(){
         </div>`;
       }).join('') + `</div>`;
     }
+    if(n!==ADMIN) h += `<div style="margin-top:24px;padding-top:18px;border-top:1px solid var(--line)">
+      <button class="btn-g" style="width:100%;border-color:rgba(229,56,59,.45);color:var(--red)" onclick="darDeBaja('${esc(n)}')">Dar de baja a ${esc(n)}</button>
+    </div>`;
   }
   document.getElementById('body-socio').innerHTML = h;
 }
@@ -1009,7 +1143,7 @@ function renderMorosos(){
     `<div class="li"><div class="li-main"><div class="li-name" style="font-size:13px">${esc(d.name)} · ${eur(d.importe)}</div></div>${tag('Saldada','t-ok')}
     ${isAdmin()?`<button class="btn-xs ghost" onclick="reabrirDeuda('${d.id}')">↺</button>`:''}</div>`).join('') + `</div>`;
 
-  h += `<span class="lbl">Temporada ${TEMPORADA}</span>`;
+  h += `<span class="lbl">Temporada ${TEMP}</span>`;
   if(!list.length) h += `<div class="empty">La penya está al día.</div>`;
   h += list.map((x,i)=>{
     const partes=[];
@@ -1048,7 +1182,7 @@ function textoAviso(){
   const i = idxActual();
   const mesRef = i>0 ? MESES[i-1].n : MESES[0].n;
 
-  let t = `⚽ PENYA FCB FANS CASTELLÓ · Temporada ${TEMPORADA}\n`;
+  let t = `⚽ PENYA FCB FANS CASTELLÓ · Temporada ${TEMP}\n`;
   t += `Cuota: ${CUOTA} € al mes · ${TOTAL_TEMP} € la temporada\n`;
   t += `Cerrado hasta ${mesRef.toLowerCase()}.\n\n`;
 
@@ -1103,7 +1237,7 @@ function renderExtras(){
   h += `<span class="lbl">Lotería de Navidad</span>`;
   h += `<div class="note note-m">Cada socio, o <b style="color:var(--text)">vende</b> su lotería, o <b style="color:var(--text)">paga ${LOTERIA} €</b>. También paga quien prefiere no cogerla.</div>`;
 
-  const miLot = loteria.find(l=>l.id===slug(ME)) || null;
+  const miLot = loteria.find(l=>l.id===lotId(ME)) || null;
   h += `<div class="card">
     <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--faint);font-weight:700;margin-bottom:10px">Lo mío</div>
     <div class="pills">
@@ -1114,7 +1248,7 @@ function renderExtras(){
   </div>`;
 
   h += `<div class="card">` + SOCIOS.map(n=>{
-    const l = loteria.find(x=>x.id===slug(n));
+    const l = loteria.find(x=>x.id===lotId(n));
     const st = !l ? tag('Sin decidir','t-mut')
       : l.modo==='vende' ? tag('Vende','t-ok')
       : l.estado==='confirmado' ? tag('Pagada','t-ok') : tag('Debe '+eur(LOTERIA),'t-late');
@@ -1132,9 +1266,9 @@ function renderExtras(){
   /* ── PAGOS EXTRA ── */
   h += `<span class="lbl">Pagos extra</span>`;
   if(isAdmin()) h += `<button class="btn-g" style="width:100%;margin-bottom:10px" onclick="openExtra()">+ Crear pago extra</button>`;
-  if(!extras.length) h += `<div class="empty">No hay pagos extra ahora mismo.</div>`;
+  if(!extrasTemp().length) h += `<div class="empty">No hay pagos extra ahora mismo.</div>`;
 
-  extras.slice().sort((a,b)=>b.id-a.id).forEach(e=>{
+  extrasTemp().slice().sort((a,b)=>b.id-a.id).forEach(e=>{
     const socios = Array.isArray(e.socios)?e.socios:[];
     const conf = socios.filter(n=>(e.pagos||{})[n]==='confirmado').length;
     const miSt = (e.pagos||{})[ME];
@@ -1174,13 +1308,13 @@ function setLot(name, modo){
   const prev = loteria.find(l=>l.id===slug(name));
   const estado = modo==='vende' ? 'confirmado'
     : (isAdmin() ? 'confirmado' : (prev && prev.estado==='confirmado' ? 'confirmado' : 'declarado'));
-  fbSet('loteria', {id:slug(name), name, modo, estado, at:nowISO(), by:ME});
+  fbSet('loteria', {id:lotId(name), temp:TEMP, name, modo, estado, at:nowISO(), by:ME});
 }
 function cobrarLot(name){
   if(!isAdmin()) return;
-  const l = loteria.find(x=>x.id===slug(name));
+  const l = loteria.find(x=>x.id===lotId(name));
   const yaPagada = l && l.modo==='paga' && l.estado==='confirmado';
-  fbSet('loteria', {id:slug(name), name, modo:'paga', estado: yaPagada?'declarado':'confirmado', at:nowISO(), by:ME});
+  fbSet('loteria', {id:lotId(name), temp:TEMP, name, modo:'paga', estado: yaPagada?'declarado':'confirmado', at:nowISO(), by:ME});
 }
 
 /* ── extras ── */
@@ -1206,7 +1340,7 @@ function saveExtra(){
   const socios = SOCIOS.filter(n=>exSel[n]);
   if(!socios.length){ alert("Elige al menos un socio."); return; }
   const id = extras.reduce((m,e)=>Math.max(m,e.id||0),0)+1;
-  fbSet('extras', {id, titulo, importe:imp, fecha:todayISO(), socios, pagos:{}, creadoPor:ME});
+  fbSet('extras', {id, temp:TEMP, titulo, importe:imp, fecha:todayISO(), socios, pagos:{}, creadoPor:ME});
   closeM('mExtra');
 }
 function pagarExtra(id){
@@ -1230,6 +1364,40 @@ function delExtra(id){
   fbDel('extras', id);
 }
 
+/* ── alta y baja de socios ── */
+let soDesde = null;
+function openSocioNuevo(){
+  if(!isAdmin()) return;
+  soDesde = MESES[idxActual()].k;
+  document.getElementById('soNombre').value='';
+  renderSoDesde(); openM('mSocio');
+}
+function renderSoDesde(){
+  document.getElementById('soDesde').innerHTML = MESES.map(m=>
+    `<div class="mes pick ${m.k===soDesde?'sel':'next'}" onclick="pickDesde('${m.k}')"><div class="mes-k">${m.l}</div></div>`).join('');
+}
+function pickDesde(k){ soDesde=k; renderSoDesde(); }
+function saveSocio(){
+  if(!isAdmin()) return;
+  const name = document.getElementById('soNombre').value.trim();
+  if(!name){ alert("Escribe el nombre."); return; }
+  if(SOCIOS.some(n=>slug(n)===slug(name))){ alert(`${name} ya está en la lista.`); return; }
+  fbSet('socios', {id:slug(name), name, alta:true, baja:false, desde:soDesde, at:nowISO()});
+  closeM('mSocio');
+}
+function darDeBaja(name){
+  if(!isAdmin()) return;
+  if(!confirm(`¿Dar de baja a ${name}?\n\nDesaparece de la lista de socios. Lo que haya pagado se queda guardado, y si arrastra deuda la metes en Morosos.`)) return;
+  const prev = socios.find(s=>s.id===slug(name)) || {};
+  fbSet('socios', {...prev, id:slug(name), name, alta:prev.alta||false, baja:true, at:nowISO()});
+  goSection('penya');
+}
+function reactivarSocio(id){
+  if(!isAdmin()) return;
+  const s = socios.find(x=>x.id===id); if(!s) return;
+  const n = clone(s); n.baja=false; fbSet('socios', n);
+}
+
 /* ── deudas ── */
 let deSel = null;
 function openDeuda(){
@@ -1237,19 +1405,24 @@ function openDeuda(){
   deSel = null;
   document.getElementById('deImporte').value='';
   document.getElementById('deConcepto').value='';
+  document.getElementById('deOtro').value='';
   renderDeSocios(); openM('mDeuda');
 }
 function renderDeSocios(){
-  document.getElementById('deSocios').innerHTML = SOCIOS.map(n=>
-    `<button class="pill ${deSel===n?'on':''}" onclick="pickDe('${esc(n)}')">${esc(n)}</button>`).join('');
+  document.getElementById('deSocios').innerHTML =
+    SOCIOS.map(n=>`<button class="pill ${deSel===n?'on':''}" onclick="pickDe('${esc(n)}')">${esc(n)}</button>`).join('') +
+    `<button class="pill ${deSel==='__otro'?'on':''}" onclick="pickDe('__otro')">+ Ya no es socio</button>`;
+  document.getElementById('deOtroWrap').style.display = deSel==='__otro' ? 'block' : 'none';
 }
 function pickDe(n){ deSel=n; renderDeSocios(); }
 function saveDeuda(){
-  if(!deSel){ alert("Elige el socio."); return; }
+  let name = deSel;
+  if(deSel==='__otro') name = document.getElementById('deOtro').value.trim();
+  if(!name){ alert("Elige el socio o escribe el nombre."); return; }
   const imp = parseFloat(document.getElementById('deImporte').value.trim().replace(',','.'));
   if(!imp || isNaN(imp) || imp<=0){ alert("Pon un importe válido."); return; }
   const concepto = document.getElementById('deConcepto').value.trim() || "Temporada 25/26";
-  fbSet('deudas', {id:slug(deSel), name:deSel, importe:imp, concepto, saldado:false, at:nowISO()});
+  fbSet('deudas', {id:slug(name), name, importe:imp, concepto, saldado:false, exSocio: deSel==='__otro', at:nowISO()});
   closeM('mDeuda');
 }
 function reabrirDeuda(id){
