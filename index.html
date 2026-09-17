@@ -408,7 +408,7 @@ window.addEventListener('fb-ready', () => window.__start());
    Sube APP_VERSION en cada despliegue.
    ═══════════════════════════════════════════════════════════════ */
 
-const APP_VERSION = 13;
+const APP_VERSION = 14;
 const ADMIN = "David";                 // único que confirma
 const PIN_ADMIN = "1899";              // clave del tesorero
 const CUOTA = 20;                      // € al mes
@@ -825,8 +825,19 @@ function renderMis(){
     <div class="bar"><div class="bar-fill" style="width:${r.pct}%"></div></div>
   </div>`;
 
+  /* Avisos de pagos rechazados */
+  pagosTemp().filter(p=>p.name===ME && p.estado==="rechazado").forEach(p=>{
+    const m = MESES.find(x=>x.k===p.mes);
+    h += `<div class="note note-r">
+      <b>${ADMIN} no ha encontrado tu pago de ${esc(m?m.n.toLowerCase():p.mes)}.</b><br>
+      ${p.motivo?esc(p.motivo)+'<br>':''}
+      Habla con ${ADMIN} o mándale el justificante de la transferencia por WhatsApp. Ese mes sigue contando como no pagado.
+      <button class="btn-g" style="width:100%;margin-top:10px;border-color:rgba(229,56,59,.45);color:#FF8A8C" onclick="vistoRechazo('${p.id}')">Entendido, quitar aviso</button>
+    </div>`;
+  });
+
   if(r.porConfirmar>0)
-    h += `<div class="note note-o">Tienes ${eur(r.porConfirmar)} marcados esperando que David los confirme.</div>`;
+    h += `<div class="note note-o">Tienes ${eur(r.porConfirmar)} marcados esperando que ${ADMIN} los confirme.</div>`;
 
   if(r.debeTotal>0){
     h += `<div class="note note-r"><b>Debes ${eur(r.debeTotal)}</b><br>`;
@@ -859,7 +870,7 @@ function renderMis(){
         <div class="li-sub">${esc((METODOS[p.metodo]||{l:'—'}).l)}${p.declaradoAt?' · '+p.declaradoAt.slice(8,10)+'/'+p.declaradoAt.slice(5,7):''}</div>
       </div>
       ${p.foto?`<button class="btn-xs ghost" onclick="verFoto('${p.id}')">Ver</button>`:''}
-      ${p.estado==='confirmado'?tag('Confirmado','t-ok'):tag('Por confirmar','t-dec')}
+      ${p.estado==='confirmado'?tag('Confirmado','t-ok'):p.estado==='rechazado'?tag('Rechazado','t-late'):tag('Por confirmar','t-dec')}
     </div>`;
   }).join('') + `</div>`;
 
@@ -1083,10 +1094,23 @@ function confirmarPago(id){
   const p = pagos.find(x=>x.id===id); if(!p) return;
   const n = clone(p); n.estado="confirmado"; n.confirmadoAt=nowISO(); fbSet('pagos', n);
 }
+/* Rechazar no borra: deja el aviso al socio para que lo aclare contigo. */
 function rechazarPago(id){
   if(!isAdmin()) return;
   const p = pagos.find(x=>x.id===id); if(!p) return;
-  if(!confirm(`¿Rechazar el pago de ${p.name}?\n\nVolverá a aparecer como no pagado.`)) return;
+  const m = MESES.find(x=>x.k===p.mes);
+  if(!confirm(`¿Rechazar el pago de ${p.name} (${m?m.n:p.mes})?\n\nLe saltará un aviso diciéndole que hable contigo y te mande el justificante.`)) return;
+  const motivo = prompt("¿Quieres decirle algo? (opcional)\n\nEj: No me consta en el banco", "");
+  if(motivo===null) return;
+  const n = clone(p);
+  n.estado = "rechazado";
+  n.rechazadoAt = nowISO();
+  n.motivo = String(motivo||'').trim() || null;
+  fbSet('pagos', n);
+}
+function vistoRechazo(id){
+  const p = pagos.find(x=>x.id===id); if(!p) return;
+  if(p.name!==ME && !isAdmin()) return;
   fbDel('pagos', id);
 }
 function confirmarExtra(id, name){
@@ -1141,7 +1165,7 @@ function renderSocio(){
         return `<div class="li">
           <div class="li-main"><div class="li-name">${esc(m?m.n:p.mes)}</div>
           <div class="li-sub">${esc((METODOS[p.metodo]||{l:'—'}).l)}</div></div>
-          ${p.estado==='confirmado'?tag('Confirmado','t-ok'):tag('Por confirmar','t-dec')}
+          ${p.estado==='confirmado'?tag('Confirmado','t-ok'):p.estado==='rechazado'?tag('Rechazado','t-late'):tag('Por confirmar','t-dec')}
           <button class="btn-xs danger" onclick="rechazarPago('${p.id}')">×</button>
         </div>`;
       }).join('') + `</div>`;
