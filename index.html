@@ -408,7 +408,7 @@ window.addEventListener('fb-ready', () => window.__start());
    Sube APP_VERSION en cada despliegue.
    ═══════════════════════════════════════════════════════════════ */
 
-const APP_VERSION = 12;
+const APP_VERSION = 13;
 const ADMIN = "David";                 // único que confirma
 const PIN_ADMIN = "1899";              // clave del tesorero
 const CUOTA = 20;                      // € al mes
@@ -711,8 +711,8 @@ function recaudado(){
   let ex=0; extrasTemp().forEach(e=>{ Object.values(e.pagos||{}).forEach(v=>{ if(v==="confirmado") ex += Number(e.importe)||0; }); });
   return {cuotas, lot, ex, total: cuotas+lot+ex};
 }
-/* Todo lo que espera tu ✓, venga de donde venga: cuotas, lotería o extras.
-   Sale todo junto en Socios para no tener que buscarlo por la app. */
+/* Las cuotas de meses que esperan tu ✓. Solo cuotas: la lotería y los
+   pagos extra se gestionan en su propio apartado. */
 function pendientes(){
   const out = [];
   pagosTemp().filter(p=>p.estado==="declarado").forEach(p=>{
@@ -724,21 +724,10 @@ function pendientes(){
       ok:`confirmarPago('${p.id}')`, no:`rechazarPago('${p.id}')`,
     });
   });
-  extrasTemp().forEach(e=>{
-    Object.entries(e.pagos||{}).forEach(([n,v])=>{
-      if(v!=="declarado") return;
-      out.push({
-        name:n, importe:e.importe, refId:String(e.id), foto:null, at:'',
-        detalle:`${e.titulo} · pago extra`,
-        ok:`confirmarExtra(${e.id},'${esc(n)}')`, no:`rechazarExtra(${e.id},'${esc(n)}')`,
-      });
-    });
-  });
   return out.sort((a,b)=>(a.at||'').localeCompare(b.at||''));
 }
-const porConfirmarCount = () =>
-  pagosTemp().filter(p=>p.estado==="declarado").length
-  + extrasTemp().reduce((s,e)=>s+Object.values(e.pagos||{}).filter(v=>v==="declarado").length,0);
+/* El aviso solo cuenta cuotas de meses. Lo demás se confirma en su sitio. */
+const porConfirmarCount = () => pagosTemp().filter(p=>p.estado==="declarado").length;
 
 /* ═══════════════ NAVEGACIÓN ═══════════════ */
 function goMenu(){
