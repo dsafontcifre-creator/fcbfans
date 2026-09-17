@@ -158,6 +158,8 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
 .alerta-n{font-family:'Archivo Black',sans-serif;font-size:34px;line-height:1;letter-spacing:-.03em;}
 .alerta-t{font-family:'Archivo Black',sans-serif;font-size:15px;text-transform:uppercase;letter-spacing:-.01em;line-height:1.1;}
 .alerta-s{font-size:11px;font-weight:600;opacity:.75;margin-top:3px;}
+.cuenta-menu{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--accent);border-radius:12px;padding:14px 16px;margin-top:22px;cursor:pointer;}
+.cuenta-menu:active{background:var(--accent);color:#0B1226;}
 
 /* ── AVISOS ─────────────────────────────────────────── */
 .note{border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.5;margin-bottom:12px;}
@@ -222,6 +224,7 @@ input,select,textarea,button{font-family:'Archivo',system-ui,sans-serif;outline:
   <div class="wrap" style="padding-top:8px">
     <div id="menuAlert"></div>
     <div id="menuList"></div>
+    <div id="menuCuenta"></div>
     <div style="margin-top:22px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--faint)" id="menuFoot"></div>
   </div>
 </div>
@@ -408,7 +411,7 @@ window.addEventListener('fb-ready', () => window.__start());
    Sube APP_VERSION en cada despliegue.
    ═══════════════════════════════════════════════════════════════ */
 
-const APP_VERSION = 14;
+const APP_VERSION = 15;
 const ADMIN = "David";                 // único que confirma
 const PIN_ADMIN = "1899";              // clave del tesorero
 const CUOTA = 20;                      // € al mes
@@ -807,6 +810,17 @@ function renderMenu(){
       <span style="font-size:22px;color:#0B1226">›</span>
     </div>` : '';
   }
+
+  /* Número de cuenta, a mano desde la primera pantalla */
+  const elC = document.getElementById('menuCuenta');
+  if(elC) elC.innerHTML = `<div class="cuenta-menu" onclick="copiar('${IBAN.replace(/ /g,'')}','Cuenta copiada')">
+    <div style="flex:1;min-width:0">
+      <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--faint);font-weight:700">Número de cuenta · toca para copiar</div>
+      <div style="font-family:'Archivo Black',sans-serif;font-size:14px;letter-spacing:.02em;margin-top:5px;word-break:break-all">${IBAN}</div>
+      <div style="font-size:10px;color:var(--faint);margin-top:4px">Concepto: tu nombre + el mes</div>
+    </div>
+    <span style="font-size:19px;color:var(--accent);flex-shrink:0">⧉</span>
+  </div>`;
 
   const rec = recaudado();
   const bt = document.getElementById('brandTemp');
